@@ -1,0 +1,76 @@
+.login-navbar {
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid #33385515;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: space-evenly;
+  position: fixed;
+  z-index: 1;
+  background-color: #fff;
+}
+.login-navbar .logo {
+  width: 12rem;
+}
+
+.login-navbar .logo img {
+  width: 100%;
+}
+.login-navbar .btn {
+  display: flex;
+  justify-content: center;
+}
+.login-navbar .btn button {
+  color: rgb(0, 89, 255);
+  background-color: transparent;
+  font-size: 1rem;
+  margin: 0 0 0 5px;
+}
+.login-out-btn {
+  color: #0059ff;
+  border-bottom: 2px solid #0059ff;
+  padding: 5px;
+  margin: 0 10px;
+
+}
+.login-out-btn button {
+  font-size: 1.1rem;
+  background-color: transparent;
+  color: #0059ff;
+}
+.icon-links{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.icon {
+  cursor: pointer;
+}
+.nav-links ul{
+  display: flex;
+}
+.nav-links ul li{
+  padding: 0 5px;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+@media screen and (max-width: 400px) {
+  .login-navbar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  .login-navbar .logo img {
+    width: 100%;
+    padding-bottom: 0;
+  }
+  .icon {
+    margin-right: 5px;
+  }
+  .icon i {
+    font-size: 1.4rem;
+    color: #384555;
+  }
+}

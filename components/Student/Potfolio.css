@@ -1,0 +1,10 @@
+.potfolio button {
+  background-color: #333855;
+  color: #fff;
+  position: fixed;
+  bottom: 10px;
+  right: 2px;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 1.1rem;
+}

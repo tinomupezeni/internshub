@@ -1,0 +1,63 @@
+.company {
+  padding-top: 90px;
+}
+.company .ava-depts {
+  padding: 1rem;
+}
+
+.company .ava-depts h4 {
+  color: #000;
+}
+.company .ava-depts ul {
+  border: 1px solid;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 4px;
+}
+.company .ava-depts textarea{
+  font-size: 1rem;
+  padding: 2px;
+}
+.company .ava-depts button {
+  font-size: 1.1rem;
+  color: #000;
+  background-color: red;
+  border: 1px solid;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  margin: 0 auto;
+}
+.company ul {
+  left: 2rem;
+}
+.company li {
+  list-style-type: disc;
+  border: 1px solid #00000093;
+  margin: 5px 0;
+}
+
+.company .new-dept{
+  position: fixed;
+  bottom: 5px;
+  right: 5px;
+  z-index: 1;
+  font-size: 2.2rem;
+  color: #333855;
+  background: transparent;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.active-dash{
+  background-color: #0bafbb;
+  color: #000;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  display: block;
+  justify-content: stretch;
+  border-radius: 4px;
+  box-shadow: 0 5px 25px 2px rgba(0, 0, 0, 0.973);
+}

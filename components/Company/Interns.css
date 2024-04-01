@@ -1,0 +1,53 @@
+.interns {
+  padding: 80px 10px;
+}
+.interns-data {
+  display: flex;
+  flex-direction: column;
+ 
+}
+.interns-heading {
+  padding: 15px 0;
+}
+
+.interns-heading h3 {
+  padding: 10px 0;
+}
+.interns-data .intern {
+  display: flex;
+  
+  padding: 10px 5px;
+  margin: 10px 0;
+  border-bottom: 1px solid;
+  cursor: pointer;
+  padding: 5px;
+  margin: 5px;
+  transition: 0.3s ease-in-out;
+  width: 100%;
+ 
+}
+.intern button{
+  padding: 10px;
+  font-size: 1 rem;
+  background-color: #0059ff;
+  color: #fff;
+  width: 60%;
+  margin: 0 auto;
+  border-radius: 4px;
+}
+
+.video{
+height: 50vh;
+overflow-x: hidden;
+}
+
+
+.video-info {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  width: 40%;
+  padding: 5px ;
+}
+
+

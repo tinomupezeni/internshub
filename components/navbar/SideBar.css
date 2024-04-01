@@ -1,0 +1,21 @@
+.side-bar {
+  top: 60px;
+  position: fixed;
+  z-index: 9999;
+  background-color: #fff;
+  transition: 0.3s ease-in-out;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  width: 60%;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 5px 25px 2px rgba(0, 0, 0, 0.671);
+  transition: all 0.5s ease;
+}
+
+.side-bar button{
+   background: transparent;
+   font-size: 1rem;
+   padding: 10px;
+}
