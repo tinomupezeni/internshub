@@ -1,14 +1,13 @@
 import React from "react";
-import Navbar from "../components/navbar/Navbar";
 import Student from "../components/Student/Student";
 import Footer from "../components/Footer/Footer";
+import StudentNav from "../components/navbar/StudentNav";
 
 export default function StudentView() {
   return (
     <>
-      <Navbar />
+      <StudentNav />
       <Student />
-      <Footer />
     </>
   );
 }

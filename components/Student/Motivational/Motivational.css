@@ -1,0 +1,15 @@
+.motivational {
+  padding-top: 80px;
+  padding-left: 20px;
+  padding-bottom: 20px;
+}
+
+.motivational ul li {
+  padding: 20px;
+}
+
+.motivational img {
+  width: 100%;
+  object-fit: cover;
+  height: 40vh;
+}

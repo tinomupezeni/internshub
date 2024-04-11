@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./Company.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
-import AutoResizingTextarea from "../Student/AutoResizingTextarea";
+import AutoResizingTextarea from "../Hero/AutoResizingTextarea";
 
 export default function CompanyProfile() {
   const [state, setState] = useState({
@@ -57,12 +57,15 @@ export default function CompanyProfile() {
         newRequirement: [""],
       },
     ],
+    addDeptTemp: true,
+    newDepartment: "",
+    newDeptRequirements: [""],
   });
 
   const compAddDept = (e) => {
     const newDepartment = {
       department: e.target.value,
-      requirements: [], // Add other properties if needed
+      requirements: [],
       newRequirement: [""],
     };
 
@@ -73,6 +76,16 @@ export default function CompanyProfile() {
       };
     });
   };
+
+  const addCompDeptBtn = () => {
+    setState((prevState) => {
+      return { ...prevState, addDeptTemp: true };
+    });
+  };
+
+  const addNewDept = (e) => {
+    
+  }
 
   const compRemoveDept = (depToRemove) => {
     setState((prevState) => {
@@ -140,40 +153,47 @@ export default function CompanyProfile() {
   return (
     <>
       <div className="company">
-        <h3>departments you offer</h3>
-        <div className="ava-depts">
-          {state.compDepartments.map((dep, index) => (
-            <ul key={index}>
-              <h4>{dep.department}</h4>
-              <div style={{ marginLeft: "50px" }}>
-                <Requirements
-                  requirements={dep.requirements}
-                  newRequirement={dep.newRequirement}
-                  index={index}
-                  handleNewRequirementChange={handleNewRequirementChange}
-                  handleRequirementChange={handleRequirementChange}
-                />
-              </div>
-              <button onClick={() => compRemoveDept(dep)}>
-                remove department
-              </button>
-            </ul>
-          ))}
-        </div>
-        <button className="new-dept">
+        <h1>your departments</h1>
+        <p>
+          add or remove departments with the necessary requirements for interns
+          to meet
+        </p>
+        {!state.addDeptTemp ? (
+          <div className="ava-depts">
+            {state.compDepartments.map((dep, index) => (
+              <ul key={index}>
+                <h4>{dep.department}</h4>
+                <div style={{ marginLeft: "50px" }}>
+                  <Requirements
+                    requirements={dep.requirements}
+                    newRequirement={dep.newRequirement}
+                    index={index}
+                    handleNewRequirementChange={handleNewRequirementChange}
+                    handleRequirementChange={handleRequirementChange}
+                  />
+                </div>
+                <button onClick={() => compRemoveDept(dep)}>
+                  remove department
+                </button>
+              </ul>
+            ))}
+          </div>
+        ) : (
+          <div className="other-depts">
+            <CompDepts
+              departments={state.departments.filter(
+                (dep) =>
+                  !state.compDepartments.some(
+                    (compDep) => compDep.department === dep
+                  )
+              )}
+              compAddDept={compAddDept}
+            />
+          </div>
+        )}
+        <button className="new-dept" onClick={addCompDeptBtn}>
           <FontAwesomeIcon icon={faPlusCircle} />
         </button>
-        <div className="other-depts">
-          <CompDepts
-            departments={state.departments.filter(
-              (dep) =>
-                !state.compDepartments.some(
-                  (compDep) => compDep.department === dep
-                )
-            )}
-            compAddDept={compAddDept}
-          />
-        </div>
       </div>
     </>
   );
@@ -182,7 +202,7 @@ export default function CompanyProfile() {
 const CompDepts = ({ departments, compAddDept }) => {
   return (
     <div className="login">
-      <label>select department(s) </label>
+      <label>select department </label>
       <select onChange={(e) => compAddDept(e)}>
         {departments.map((dep, index) => (
           <option value={dep} key={index}>

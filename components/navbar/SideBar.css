@@ -15,7 +15,51 @@
 }
 
 .side-bar button{
-   background: transparent;
-   font-size: 1rem;
-   padding: 10px;
+  background: transparent;
+  font-size: 1rem;
+  padding: 10px;
+}
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  text-align: start;
+  padding: 10px 2px;
+}
+
+.side-bar .nav-links button{
+  text-align: start;
+  padding: 10px ;
+  position: relative;
+  font-size: 1.2rem;
+  text-decoration: none;
+  color: #383838;
+  width: 100%;
+  display: block;
+  transition: .3s ease-in-out;
+}
+
+.nav-links Link{
+  text-decoration: none;
+}
+
+.nav-links button:hover{
+  background-color: #dfdede;
+}
+.side-bar-heading{
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  padding: 10px 0;
+  background-color: #383838;
+  color: #fff;
+}
+
+.side-bar-heading i{
+  cursor: pointer;
+  color: red ;
+  font-size: 1.2rem;
 }

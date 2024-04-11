@@ -7,13 +7,19 @@ import { faBars } from "@fortawesome/free-solid-svg-icons";
 import SideBar from "./SideBar";
 
 export default function SignupNavbar() {
+
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
 
   const [toggleIcon, setToggleIcon] = useState(false);
 
   const handleIcon = () => {
     setToggleIcon(true);
   };
+
+  const updateSignup = () => {
+
+  }
 
   useEffect(() => {
     const handleResize = () => {
@@ -48,7 +54,7 @@ export default function SignupNavbar() {
           </>
         )}
       </div>
-      {toggleIcon && <SideBar signUp={true}/>}
+      {toggleIcon && windowWidth < 850 && <SideBar signUp={true} />}
     </>
   );
 }

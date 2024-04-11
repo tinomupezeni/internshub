@@ -1,0 +1,83 @@
+.cv {
+  width: 60%;
+  margin: 0 auto;
+  padding: 10px 0;
+}
+.cv-document {
+  margin: 0 auto;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.cv-preview {
+  display: flex;
+}
+.cv-document input {
+  background-color: transparent;
+  margin: 5px 0;
+  width: 90%;
+  border: 1px solid #383838;
+  font-size: 1rem;
+  padding: 10px;
+  border-radius: 4px;
+  text-transform: none;
+}
+.cv-document label {
+  font: 1rem;
+  padding: 5px;
+}
+
+.cv-document textarea {
+  background-color: transparent;
+  margin: 5px 0;
+  width: 90%;
+  border: 1px solid #383838;
+  font-size: 1rem;
+  padding: 10px;
+  border-radius: 4px;
+  text-transform: none;
+}
+
+.personal-info div {
+  display: flex;
+  flex-direction: column;
+}
+
+.cv-document li {
+  list-style-type: disc;
+}
+
+.cv-continue-btn button {
+  width: 60%;
+  background-color: #0059ff;
+  padding: 10px;
+  margin-left: 50%;
+  transform: translate(-50%);
+  color: #fff;
+  border-radius: 4px;
+}
+
+@media screen and (max-width: 850px) {
+  .student-profile {
+    margin-left: 90px;
+    width: 100%;
+  }
+  .cv {
+   width: 100%;
+   margin: 0 auto;
+ }
+}
+@media screen and (max-width: 400px) {
+  .student-profile {
+    margin: 1rem;
+    width: 100%;
+  }
+
+  .show-dash {
+    display: block;
+  }
+  .hide-dash {
+    display: none;
+  }
+}

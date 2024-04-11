@@ -8,16 +8,32 @@ import {
   faSignOut,
   faBuildingColumns,
   faUserGraduate,
+  faClose,
+  faComments,
 } from "@fortawesome/free-solid-svg-icons";
-import SideBar from "./SideBar";
+import Ai from "../Student/Ai/Ai";
+import InternsSideBar from "./InternsSideBar";
 
-export default function CompNavbar() {
+export default function StudentCvNav() {
+  const [aiChat, setAiChat] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const [toggleIcon, setToggleIcon] = useState(false);
 
   const handleIcon = () => {
     setToggleIcon(true);
+  };
+
+  const handleAi = () => {
+    setAiChat(true);
+  };
+
+  const closeAi = () => {
+    setAiChat(false);
+  };
+
+  const closeSideBar = () => {
+    setToggleIcon(false);
   };
 
   useEffect(() => {
@@ -41,11 +57,6 @@ export default function CompNavbar() {
             <>
               <div className="links">
                 <NavLinks windowWidth={windowWidth} />
-                <div className="login-out-btn">
-                  <button>
-                    log out <FontAwesomeIcon icon={faSignOut} />
-                  </button>
-                </div>
               </div>
             </>
           ) : (
@@ -57,9 +68,35 @@ export default function CompNavbar() {
               </div>
             </>
           )}
+          <button onClick={handleAi} className="ai-btn">
+            <FontAwesomeIcon icon={faComments} /> ai chat
+          </button>
         </div>
       </div>
-      {toggleIcon && windowWidth < 850 && <SideBar companyAccount={true} />}
+      {toggleIcon && windowWidth < 850 && (
+        <>
+          <div className="side-bar">
+            <div className="side-bar-heading">
+              <h4>explore</h4>
+              <i onClick={closeSideBar}>
+                <FontAwesomeIcon icon={faClose} />
+              </i>
+            </div>
+            <InternsSideBar />
+          </div>
+        </>
+      )}
+      {aiChat && (
+        <div className="ai-cont">
+          <div className="ai-heading">
+            <h3>max the manager</h3>
+            <i onClick={closeAi}>
+              <FontAwesomeIcon icon={faClose} />
+            </i>
+          </div>
+          <Ai />
+        </div>
+      )}
     </>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import Logo from "../../assets/Logo Files/For Web/png/Color logo - no background.png";
 import "./Navbar.css";
 
@@ -22,26 +23,30 @@ export default function Navbar() {
           <img src={Logo} />
         </div>
         <div className="btns">
-          <button
-            onClick={loginbtn}
-            style={
-              login
-                ? { backgroundColor: "#333855", color: "#fff" }
-                : { backgroundColor: "#fff" }
-            }
-          >
-            log in
-          </button>
-          <button
-            onClick={signinbtn}
-            style={
-              signup
-                ? { backgroundColor: "#333855", color: "#fff" }
-                : { backgroundColor: "#fff" }
-            }
-          >
-            sign up
-          </button>
+          <Link to="/log-in">
+            <button
+              onClick={loginbtn}
+              style={
+                login
+                  ? { backgroundColor: "#333855", color: "#fff" }
+                  : { backgroundColor: "#fff" }
+              }
+            >
+              log in
+            </button>
+          </Link>
+          <Link to="/get-started">
+            <button
+              onClick={signinbtn}
+              style={
+                signup
+                  ? { backgroundColor: "#333855", color: "#fff" }
+                  : { backgroundColor: "#fff" }
+              }
+            >
+              sign up
+            </button>
+          </Link>
         </div>
       </div>
     </>

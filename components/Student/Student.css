@@ -1,103 +1,16 @@
 .student {
-  display: flex;
+  /* display: flex; */
   padding-top: 80px;
   padding-bottom: 20px;
+  padding-left: 20px;
 }
 .student .student-profile {
   margin-left: 30%;
   width: 100%;
 }
-.student .dashboard {
-  background-color: #333855;
-  color: #fff;
-  width: 25%;
-  margin: 10px;
-  border-radius: 5px;
-  align-items: start;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  list-style: none;
-  padding: 20px 10px;
-  position: fixed;
-}
-.student .dashboard i {
-  font-size: 1.6rem;
-  padding: 0 10px;
-}
 
-.student .dashboard li {
-  cursor: pointer;
-}
-
-
-.student .cv-document {
-  display: flex;
-  box-shadow: 0 5px 25px 2px rgba(0, 0, 0, 0.322);
-  /* width: auto; */
-  max-width: 794px;
-  margin: 0 auto;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); /* optional: add a shadow for a paper-like effect */
-  overflow: auto;
-}
 .student .cv-preview {
-  display: flex;
-}
-.student .cv-document input {
-  background-color: #00000000;
-  margin: 5px 0;
-  width: 80%;
-  border: 1px solid #3338553f;
-}
-
-.student .cv-document textarea {
-  background-color: #00000000;
-  width: 100%;
-  border: 1px solid #3338553f;
-}
-.student .cv-document input::placeholder {
-  color: #444444;
-  padding: 5px;
-}
-.student .cv-document textarea::placeholder {
-  color: #444444;
-  padding: 5px;
-}
-
-.student .cv-document .left-temp {
-  background-color: #fff;
-  padding: 10px;
-  width: 15rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-}
-.student .cv-preview .left-temp {
-  background-color: #d9c5df;
-  padding: 10px;
-  width: 15rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-}
-.student .cv-document .right-temp {
-  padding: 20px;
-  background-color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-}
-
-.student .cv-document li {
-  list-style-type: disc;
-}
-
-.more-icon {
-  display: none;
-}
-
-.student .cv button {
-  background-color: #333855;
+  background-color: #0059ff;
   color: #fff;
   position: fixed;
   bottom: 10px;
@@ -111,111 +24,10 @@
     margin-left: 90px;
     width: 100%;
   }
-  .student .dash-icon {
-    display: block;
-    color: #333855;
-    font-size: 1.8rem;
-    cursor: pointer;
-    padding: 0 5px;
-  }
-  .student .dashboard li {
-    display: flex;
-    justify-content: start;
-    text-align: start;
-    align-items: center;
-  }
-  .student .dashboard .text {
-    display: none;
-  }
-  .student .dashboard {
-    width: 60px;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    list-style: none;
-  }
-  .student .dashboard i {
-    font-size: 1.6rem;
-  }
-  .student .cv-document {
-    display: flex;
-    box-shadow: 0 5px 25px 2px rgba(0, 0, 0, 0.322);
-    width: 90%;
-    margin: 0 auto;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.281); /* optional: add a shadow for a paper-like effect */
-    overflow: auto;
-  }
-  .student .cv-document .left-temp {
-    background-color: #ffffff;
-    padding: 10px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-  }
-  .student .cv-preview .left-temp {
-    background-color: #d9c5df;
-    padding: 10px;
-    width: 15rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-  }
 }
 @media screen and (max-width: 400px) {
   .student .student-profile {
     margin: 1rem;
     width: 100%;
-  }
-  .student .cv-document {
-    display: flex;
-    flex-direction: column-reverse;
-    width: 95%;
-    margin: 0 auto;
-  }
-  .student .cv-preview .left-temp {
-    background-color: #d9c5df;
-    padding: 10px;
-    width: 15rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-  }
-  .student .dashboard .text {
-    display: block;
-  }
-  .student .dashboard {
-    background-color: #333855;
-    color: #fff;
-    width: auto;
-    margin: 10px;
-    border-radius: 5px;
-    align-items: start;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    list-style: none;
-    padding: 20px 10px;
-    position: fixed;
-    display: block;
-  }
-  .student .show-dash {
-    display: block;
-  }
-  .student .hide-dash {
-    display: none;
-  }
-  .more-icon {
-    display: block;
-    z-index: 99999;
-    position: fixed;
-    /* margin: 5px 10px; */
-    top: 45px;
-    left: 2px;
-    background-color: #333855;
-    color: #fff;
-    padding: 5px 14px;
-    border-radius: 5px;
   }
 }

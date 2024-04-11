@@ -4,6 +4,10 @@
   margin: auto;
 }
 
+.login .intro-text{
+  padding-bottom: 20px;
+}
+
 .btn{
   margin-top: 20px;
 }
@@ -13,5 +17,8 @@
     padding: 100px 20px;
     width: 100%;
     margin: auto auto;
+  }
+  .login .comp-signup{
+    width: 90%;
   }
 }
