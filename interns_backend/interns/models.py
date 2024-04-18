@@ -5,25 +5,23 @@ class Company(models.Model):
         ('active', 'Active'),
         ('inactive', 'Inactive'),
     )
-    
+    id = models.AutoField(primary_key=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='company')
     compName = models.CharField(max_length=100, default='Nash')
     compEmail = models.EmailField(max_length=100,unique=True, default='example@example.com')
     compPassword = models.CharField(max_length=100, default='123')
-    confirmPassword = models.CharField(max_length=100, default='123')
 
 class Student(models.Model):
     STATUS_CHOICES = (
         ('active', 'Active'),
         ('inactive', 'Inactive'),
     )
-    
+    id = models.AutoField(primary_key=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES)
     studentName = models.CharField(max_length=100 , default='John')
     studentSurname = models.CharField(max_length=100, default='Doe')
     studentEmail = models.EmailField(max_length=100,unique=True, default='example@example.com')
     studentPassword = models.CharField(max_length=100 , default='123')
-    confirmPasswordSt = models.CharField(max_length=100 , default='123')
 
 
 

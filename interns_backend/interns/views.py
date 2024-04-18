@@ -10,10 +10,10 @@
 # from django.shortcuts import render, redirect
 # from django.contrib.auth.models import User
 # from .models import Student, Company
+from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-from django.contrib.auth.models import User
 from .models import Student, Company
 
 @csrf_exempt
@@ -22,10 +22,9 @@ def signup_student(request):
         data = json.loads(request.body.decode('utf-8'))
         status = data.get('status')
         student_name = data.get('studentName')
-        student_surname = data.get('studentSurname')
         student_email = data.get('studentEmail')
         student_password = data.get('studentPassword')
-        confirm_password = data.get('confirmPasswordSt')
+        confirm_password = data.get('confirmPassword')
         
         if student_password != confirm_password:
             return JsonResponse({'error': 'Passwords do not match'}, status=400)
@@ -33,7 +32,6 @@ def signup_student(request):
         student = Student.objects.create(
             status=status, 
             studentName=student_name, 
-            studentSurname=student_surname, 
             studentEmail=student_email, 
             studentPassword=student_password
         )
@@ -64,29 +62,37 @@ def signup_company(request):
         return JsonResponse({'message': 'Signup successful'}, status=201)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
+@csrf_exempt
+def login_student(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        email = data.get('email')
+        password = data.get('password')
+        
+        user = authenticate(studentEmail=email, studentPassword=password)
+        
+        if user is not None:
+            return JsonResponse({'message': 'Student login successful'})
+        else:
+            return JsonResponse({'error': 'Invalid email or password'}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-# class LoginView(APIView):
-#     def post(self, request):
-#         serializer = LoginSerializer(data=request.data)
-#         if serializer.is_valid():
-#             user = serializer.validated_data['user']
-#             # Implement login logic (e.g., generate token)
-#             return Response({'message': 'Login successful'}, status=status.HTTP_200_OK)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+@csrf_exempt
+def login_company(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        email = data.get('email')
+        password = data.get('password')
+        
+        # Authenticate the company
+        user = authenticate(compEmail=email, compPassword=password)
+        
+        if user is not None:
+            return JsonResponse({'message': 'Company login successful'})
+        else:
+            return JsonResponse({'error': 'Invalid email or password'}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-# # @api_view(['POST'])
-# # def signup(request):
-# #     data=request.data
-# #     email=data.get('email')
-# #     password=data.get('password')
-# #     role=data.get('role')
-
-# #     user=User.objects.create(email=email, password=password, role=role)
-# # if role=='student':
-# #     Student.objects.create(user=user)
-# # elif role=='staff':
-# #     Staff.objects.create(user=user)
-# #return Response(status=status.HTTP_201_CREATED)
 
 # class SignupView(APIView):
 #     def post(self, request):
