@@ -8,6 +8,7 @@ import CategoryInto from "./signup-components/CategoryIntro";
 import CompanySignUp from "./signup-components/CompanySignUp";
 import StudentSignUp from "./signup-components/StudentSignUp";
 import Button from "react-bootstrap/Button";
+import Server from "../Hero/Server";
 
 export default function Signup() {
   const [state, setState] = useState({
@@ -75,10 +76,15 @@ export default function Signup() {
     },
     validationSchema: validationSchemaComp,
     onSubmit: (values) => {
-      console.log("hi");
-      console.log(values);
+      Server.signupCompany(values).then(
+        () => {
+          navigate("/log-in");
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
       // Perform signup logic here
-      navigate("/log-in");
     },
   });
   const InternFormik = useFormik({

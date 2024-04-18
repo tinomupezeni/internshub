@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Ai.css";
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
-const API = "";
+const API = "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";
 
 const ProjectsAi = () => {
   const dept = "software engineering";
