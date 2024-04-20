@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Login.css";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import CategoryInto from "./signup-components/CategoryIntro";
 import DOMPurify from "dompurify";
+import Server from "../Hero/Server";
 
 export default function Login() {
   const [state, setState] = useState({
@@ -15,6 +16,7 @@ export default function Login() {
     company: false,
     student: true,
     status: "student",
+    isLoading: false,
   });
 
   let navigate = useNavigate();
@@ -24,6 +26,23 @@ export default function Login() {
     password: Yup.string().required("Required"),
   });
 
+  const setIsLoading = () => {
+    setState((prevState) => {
+      return {
+        ...prevState,
+        isLoading: true,
+      };
+    });
+  };
+  const resetIsLoading = () => {
+    setState((prevState) => {
+      return {
+        ...prevState,
+        isLoading: false,
+      };
+    });
+  };
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -31,19 +50,25 @@ export default function Login() {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      console.log(values);
-      // Perform login logic here
-      // If login is successful, navigate to the appropriate page
+      setIsLoading();
       if (state.status === "student") {
-        setState((prevState) => {
-          return {
-            ...prevState,
-            company: false,
-            student: true,
-            status: "student",
-          };
-        });
-        navigate("/student-home");
+        Server.loginstudent(values).then(
+          () => {
+            resetIsLoading();
+            navigate("/student-home");
+          },
+          (error) => {
+            setState((prevState) => {
+              return {
+                ...prevState,
+                errorMsg:
+                  error.response.data.error.non_field_errors?.[0] ||
+                  error.response.data.error.email?.[0],
+              };
+            });
+            resetIsLoading();
+          }
+        );
       } else {
         setState((prevState) => {
           return {
@@ -53,7 +78,21 @@ export default function Login() {
             status: "company",
           };
         });
-        navigate("/company-departments");
+        Server.logincompany(values).then(
+          () => {
+            resetIsLoading();
+            navigate("/company-departments");
+          },
+          (error) => {
+            setState((prevState) => {
+              return {
+                ...prevState,
+                errorMsg: error.response.data.error.non_field_errors[0],
+              };
+            });
+            resetIsLoading();
+          }
+        );
       }
     },
   });
@@ -76,6 +115,25 @@ export default function Login() {
       });
     }
   };
+
+  useEffect(() => {
+    const handleDismissError = (event) => {
+      if (state.errorMsg && !event.target.closest(".alert")) {
+        setState((prevState) => {
+          return {
+            ...prevState,
+            errorMsg: "",
+          };
+        });
+      }
+    };
+
+    window.addEventListener("click", handleDismissError);
+
+    return () => {
+      window.removeEventListener("click", handleDismissError); // Cleanup on unmount
+    };
+  }, [state.errorMsg]); // Run effect only when errorMsg changes
   return (
     <>
       <div className="login">
@@ -119,8 +177,22 @@ export default function Login() {
                 <div className="text-danger">{formik.errors.password}</div>
               ) : null}
             </div>
+            {state.errorMsg && (
+              <p className="alert alert-danger" role="alert">
+                {state.errorMsg}
+              </p>
+            )}
             <div className="signup-btn btn">
-              <button type="submit">Log in</button>
+              <button type="submit" disabled={state.isLoading}>
+                Log in{" "}
+                <span
+                  className={`spinner-border spinner-border-sm ${
+                    state.isLoading ? "" : "d-none"
+                  }`}
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+              </button>
             </div>
           </form>
         </div>

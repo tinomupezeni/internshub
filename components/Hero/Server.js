@@ -3,11 +3,23 @@ import axios from "axios";
 const API_URL = "http://localhost:8000/";
 
 class AuthService {
-  async login(data) {
-    console.log(data);
-    return axios.post(API_URL + "login", data, {
-      headers: { "Content-Type": "application/json" },
-      withCredentials: true,
+  loginstudent(data) {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    return axios.post(API_URL + "login/student/", data, {
+      headers,
+      // withCredentials: true,
+    });
+  }
+  
+  logincompany(data) {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    return axios.post(API_URL + "login/company/", data, {
+      headers,
+      // withCredentials: true,
     });
   }
 
@@ -23,20 +35,21 @@ class AuthService {
   }
 
   signupStudent(data) {
-    data = JSON.stringify(data);
-    console.log("sent", data);
-    return axios.post(API_URL + "signup/studen/", data, {
-      headers: { "Content-Type": "application/json" },
-      withCredentials: true,
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    return axios.post(API_URL + "signup/student/", data, {
+      headers,
+      // withCredentials: true,
     });
   }
   signupCompany(data) {
-   //  data = JSON.stringify(data);
-    console.log("sent", data);
-    //  console.log(data);
-    return axios.post(API_URL + "signup/compan/", data, {
-      headers: { "Content-Type": "application/json" },
-      withCredentials: true,
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    return axios.post(API_URL + "signup/company/", data, {
+      headers,
+      // withCredentials: true,
     });
   }
 }

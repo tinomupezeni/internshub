@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import "./Signup.css";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +14,8 @@ export default function Signup() {
   const [state, setState] = useState({
     student: false,
     company: false,
+    isLoading: false,
+    errorMsg: "",
   });
   let navigate = useNavigate();
   // change
@@ -65,6 +67,22 @@ export default function Signup() {
       .required("Required"),
   });
 
+  const setIsLoading = () => {
+    setState((prevState) => {
+      return {
+        ...prevState,
+        isLoading: true,
+      };
+    });
+  };
+  const resetIsLoading = () => {
+    setState((prevState) => {
+      return {
+        ...prevState,
+        isLoading: false,
+      };
+    });
+  };
   // send data to backend
   const compFormik = useFormik({
     initialValues: {
@@ -76,12 +94,21 @@ export default function Signup() {
     },
     validationSchema: validationSchemaComp,
     onSubmit: (values) => {
+      setIsLoading();
       Server.signupCompany(values).then(
         () => {
+          resetIsLoading();
           navigate("/log-in");
         },
         (error) => {
+          resetIsLoading();
           console.log(error);
+          setState((prevState) => {
+            return {
+              ...prevState,
+              errorMsg: "g",
+            };
+          });
         }
       );
       // Perform signup logic here
@@ -98,12 +125,44 @@ export default function Signup() {
     },
     validationSchema: validationSchemaIntern,
     onSubmit: (values) => {
-      console.log("hi");
-      console.log(values);
-      // Perform signup logic here
-      navigate("/log-in");
+      setIsLoading();
+      Server.signupStudent(values).then(
+        () => {
+          resetIsLoading();
+          navigate("/log-in");
+        },
+        (error) => {
+          resetIsLoading();
+          console.log(error);
+          setState((prevState) => {
+            return {
+              ...prevState,
+              errorMsg: "g",
+            };
+          });
+        }
+      );
     },
   });
+
+  useEffect(() => {
+    const handleDismissError = (event) => {
+      if (state.errorMsg && !event.target.closest(".alert")) {
+        setState((prevState) => {
+          return {
+            ...prevState,
+            errorMsg: "",
+          };
+        });
+      }
+    };
+
+    window.addEventListener("click", handleDismissError);
+
+    return () => {
+      window.removeEventListener("click", handleDismissError); // Cleanup on unmount
+    };
+  }, [state.errorMsg]); // Run effect only when errorMsg changes
 
   return (
     <>
@@ -132,8 +191,22 @@ export default function Signup() {
             />
             <form onSubmit={compFormik.handleSubmit}>
               <CompanySignUp formik={compFormik} />
+              {state.errorMsg && (
+                <p className="alert alert-danger" role="alert">
+                  {state.errorMsg}
+                </p>
+              )}
               <div className="signup-btn">
-                <Button type="submit">create an account</Button>
+                <Button type="submit" disabled={state.isLoading}>
+                  create an account{" "}
+                  <span
+                    className={`spinner-border spinner-border-sm ${
+                      state.isLoading ? "" : "d-none"
+                    }`}
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                </Button>
               </div>
             </form>
           </>
@@ -155,8 +228,22 @@ export default function Signup() {
             />
             <form onSubmit={InternFormik.handleSubmit}>
               <StudentSignUp formik={InternFormik} />
+              {state.errorMsg && (
+                <p className="alert alert-danger" role="alert">
+                  {state.errorMsg}
+                </p>
+              )}
               <div className="signup-btn">
-                <Button type="submit">create an account</Button>
+                <Button type="submit" disabled={state.isLoading}>
+                  create an account{" "}
+                  <span
+                    className={`spinner-border spinner-border-sm ${
+                      state.isLoading ? "" : "d-none"
+                    }`}
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                </Button>
               </div>
             </form>
           </>
