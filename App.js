@@ -6,28 +6,30 @@ import JustLogin from "./routes/JustLogin";
 import CompDept from "./routes/CompDept";
 import CompInterns from "./routes/CompInterns";
 import StudentCvPage from "./routes/StudentCvPage";
-import MotivationalView from "./routes/MotivationalView";
 import StudentWelcome from "./routes/StudentWelcome";
 import StudentProject from "./routes/StudentProject";
 import StudUploadProj from "./routes/StudUploadProj";
+import { UserProvider } from "./components/Hero/UserProvider";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/get-started" element={<GetStarted />} />
-      <Route path="/log-in" element={<JustLogin />} />
-      <Route path="/student-home" element={<StudentWelcome />} />
-      <Route path="/student-profile" element={<StudentView />} />
-      <Route path="/student-profile/projects" element={<StudentProject />} />
-      <Route path="/student-profile/cv-builder" element={<StudentCvPage />} />
-      <Route
-        path="/student-profile/upload-project"
-        element={<StudUploadProj />}
-      />
-      <Route path="/company-departments" element={<CompDept />} />
-      <Route path="/company-potential-interns" element={<CompInterns />} />
-    </Routes>
+    <UserProvider>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/get-started" element={<GetStarted />} />
+        <Route path="/log-in" element={<JustLogin />} />
+        <Route path="/student-home" element={<StudentWelcome />} />
+        <Route path="/student-profile" element={<StudentView />} />
+        <Route path="/student-profile/projects" element={<StudentProject />} />
+        <Route path="/student-profile/cv-builder" element={<StudentCvPage />} />
+        <Route
+          path="/student-profile/upload-project"
+          element={<StudUploadProj />}
+        />
+        <Route path="/company-departments" element={<CompDept />} />
+        <Route path="/company-potential-interns" element={<CompInterns />} />
+      </Routes>
+    </UserProvider>
   );
 }
 
