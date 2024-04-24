@@ -1,76 +1,95 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Dropzone from "dropzone";
 import axios from "axios"; // For API requests
+import { useUser } from "../Hero/UserProvider";
+const API_URL = "http://localhost:8000/";
 
 const UploadPdf = () => {
+  const uploadRef = useRef(null);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [uploadError, setUploadError] = useState(null);
-
-  // Replace with your Django API endpoint URL
-  const uploadUrl = "/api/v1/pdf-upload/";
+  const [csrfToken, setCsrfToken] = useState(null);
+  const { loggedInData } = useUser();
+  const uploadUrl = "student/upload-cv/";
 
   const onDrop = async (acceptedFiles) => {
     const formData = new FormData();
     formData.append("file", acceptedFiles[0]);
 
     try {
-      const response = await axios.post(uploadUrl, formData, {
+      await axios.post(API_URL + uploadUrl, formData, {
         headers: {
-          "Content-Type": "multipart/form-data", // Required for file uploads
+          "Content-Type": "multipart/form-data",
+          "X-CSRFToken": csrfToken,
+          Authorization: `Token ${loggedInData.token}`,
         },
       });
 
       setUploadedFile(acceptedFiles[0]);
-      setUploadError(null); // Clear any previous errors on successful upload
+      setUploadError(null);
     } catch (error) {
-      console.error("Upload failed:", error);
       setUploadError("An error occurred during upload. Please try again.");
     }
   };
 
-  // Initialize Dropzone with security considerations (explained below)
   useEffect(() => {
-    const myDropzone = new Dropzone("#pdf-dropzone", {
-      url: uploadUrl, // Replace with your API endpoint
-      acceptedFiles: ".pdf", // Only accept PDF files
-      maxFiles: 1, // Limit to one file upload
-      parallelUploads: 1, // Avoid overloading server with parallel uploads
-      autoProcessQueue: false, // Manually trigger upload to control security
-
-      // Security considerations
-      addRemoveLinks: true, // Allow users to remove files before upload
-      dictCancelUpload: "Cancel Upload", // Informative message
-      dictRemoveFile: "Remove File", // Informative message
-      chunking: false, // Disable file chunking for security (explained below)
+    const myDropzone = new Dropzone(uploadRef.current, {
+      headers: {
+        "X-Requested-With": null,
+        Authorization: `Token ${loggedInData.token}`,
+      },
+      url: API_URL + uploadUrl,
+      acceptedFiles: ".pdf",
+      maxFiles: 1,
+      parallelUploads: 1,
+      addRemoveLinks: true,
+      dictCancelUpload: "Cancel Upload",
+      dictRemoveFile: "Remove File",
+      chunking: false,
 
       // Call upload function on sending
       init: function () {
         this.on("sending", (file, xhr, formData) => {
-          // Add any necessary security headers to the request (e.g., CSRF token)
-          formData.append("X-CSRFToken", getCsrfToken()); // Replace with your CSRF token retrieval function
+          formData.append("X-CSRFToken", getCsrfToken());
         });
+        this.on("drop", onDrop);
       },
     });
-
-    // Cleanup function to remove event listeners
+    // Apply Bootstrap classes
+    myDropzone.element.classList.add(
+      "dropzone",
+      "border",
+      "border-primary",
+      "rounded"
+    );
+    console.log("token", loggedInData.token);
+    getCsrfToken();
     return () => {
       myDropzone.destroy();
     };
   }, []);
 
-  const getCsrfToken = () => {
-    // Implement logic to retrieve the CSRF token from your Django backend (cookies, meta tag, etc.)
-    // This example assumes you have a way to access the CSRF token
-    return "your-csrf-token-here"; // Replace with actual token retrieval
+  const getCsrfToken = async () => {
+    try {
+      const response = await axios.get(API_URL + "student/upload-cv/token/");
+      setCsrfToken(response.data.csrf_token);
+      return response.data.csrf_token;
+    } catch (error) {
+      return null;
+    }
   };
 
   return (
     <div className="dropzone-container">
-      <div id="pdf-dropzone">
-        <p>Drag and drop a PDF file here, or click to select.</p>
+      <div ref={uploadRef} className="dropzone">
+        <p>click to select a pdf to upload</p>
       </div>
       {uploadedFile && <p>File uploaded: {uploadedFile.name}</p>}
-      {uploadError && <p className="error">{uploadError}</p>}
+      {uploadError && (
+        <p className="alert alert-danger" role="alert">
+          {uploadError}
+        </p>
+      )}
     </div>
   );
 };

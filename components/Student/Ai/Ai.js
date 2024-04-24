@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Ai.css";
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
+import APIkey from "../../Hero/APIkey";
 import {
   MainContainer,
   ChatContainer,
@@ -9,11 +10,10 @@ import {
   MessageInput,
   TypingIndicator,
 } from "@chatscope/chat-ui-kit-react";
-
-const API = "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";
-
+const API_URL = "http://localhost:8000/";
 const Ai = () => {
   const [typing, setTyping] = useState(false);
+  const [key, setKey] = useState("");
   const [messages, setMessages] = useState([
     {
       message: "Hello, I am Max your assistant, how can i help",
@@ -65,7 +65,7 @@ const Ai = () => {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${API}`,
+            Authorization: `Bearer ${key}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify(apiRequestBody),
@@ -88,6 +88,12 @@ const Ai = () => {
       console.error("Error:", error);
     }
   };
+
+  useEffect(() => {
+    fetch(API_URL + "/ai-key/")
+      .then((response) => response.json())
+      .then((data) => setKey(data.secret));
+  }, []);
 
   return (
     <div className="ai-container">

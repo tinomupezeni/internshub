@@ -22,7 +22,7 @@ const AutoResizingTextarea = ({ placeholder, onChange }) => {
       rows="1"
       placeholder={placeholder}
       onChange={onChange}
-      
+      style={{ width: "100%" }}
     />
   );
 };

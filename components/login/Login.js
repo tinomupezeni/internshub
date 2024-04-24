@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useUser } from "../Hero/UserProvider";
 import "./Login.css";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
@@ -42,6 +43,7 @@ export default function Login() {
       };
     });
   };
+  const { setLoggedInData } = useUser();
 
   const formik = useFormik({
     initialValues: {
@@ -53,17 +55,20 @@ export default function Login() {
       setIsLoading();
       if (state.status === "student") {
         Server.loginstudent(values).then(
-          () => {
+          (response) => {
+            setLoggedInData(response.data);
             resetIsLoading();
             navigate("/student-home");
           },
           (error) => {
+            console.log(error);
             setState((prevState) => {
               return {
                 ...prevState,
                 errorMsg:
-                  error.response.data.error.non_field_errors?.[0] ||
-                  error.response.data.error.email?.[0],
+                  error?.response?.data?.error?.non_field_errors?.[0] ||
+                  error?.response?.data?.error?.email?.[0] ||
+                  "an internal error has occurred, please try again",
               };
             });
             resetIsLoading();
@@ -79,15 +84,20 @@ export default function Login() {
           };
         });
         Server.logincompany(values).then(
-          () => {
+          (response) => {
+            setLoggedInData(response.data);
             resetIsLoading();
             navigate("/company-departments");
           },
           (error) => {
+            console.log(error);
             setState((prevState) => {
               return {
                 ...prevState,
-                errorMsg: error.response.data.error.non_field_errors[0],
+                errorMsg:
+                  error?.response?.data?.error?.non_field_errors?.[0] ||
+                  error?.response?.data?.error?.email?.[0] ||
+                  "an internal error has occurred, please try again",
               };
             });
             resetIsLoading();
@@ -104,7 +114,6 @@ export default function Login() {
 
   const statusSelect = (e) => {
     const value = e.currentTarget.getAttribute("data-value");
-    console.log(value);
     if (value === "company") {
       setState((prevState) => {
         return { ...prevState, company: true, student: false, status: value };

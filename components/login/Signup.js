@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import "./Signup.css";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
@@ -106,7 +106,7 @@ export default function Signup() {
           setState((prevState) => {
             return {
               ...prevState,
-              errorMsg: "g",
+              errorMsg: error.response.data.error,
             };
           });
         }
@@ -137,7 +137,7 @@ export default function Signup() {
           setState((prevState) => {
             return {
               ...prevState,
-              errorMsg: "g",
+              errorMsg: error.response.data.error,
             };
           });
         }

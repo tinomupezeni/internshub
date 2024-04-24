@@ -1,42 +1,84 @@
-import React, { useState } from "react";
-import { Document, Page } from "react-pdf";
-// import { pdfjsLib } from 'pdfjs-dist/build/pdf';
-import pdfJS from 'pdfjs-dist/build/pdf.js';
-
-import CVPreview from "./CVPreview";
+import React, { useState, useEffect } from "react";
+import { Document, Page } from "@react-pdf/renderer";
+import axios from "axios";
 import "./CV.css";
-pdfJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.js';
-// pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+import UploadPdf from "../../Hero/UploadPdf";
+import { useUser } from "../../Hero/UserProvider"
+
+const API_URL = "http://localhost:8000/";
 
 export default function CV() {
+  const [pdfUrl, setPdfUrl] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [uploadCv, setUploadCv] = useState(false);
-  const [numPages, setNumPages] = useState(null);
+  const { loggedInData } = useUser();
 
   const previewCv = () => {
-    setUploadCv(true);
+    setUploadCv(!uploadCv);
   };
 
-  const onDocumentLoadSuccess = ({ numPages }) => {
-    setNumPages(numPages);
-  };
+  useEffect(() => {
+    const fetchPDF = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axios.get(API_URL + "student/cv/", {
+          headers: {
+            Authorization: `Token ${loggedInData.token}`,
+          },
+        });
+        if (response.status === 200) {
+          setPdfUrl(response.data.presigned_url);
+        } else {
+          setError("An error occurred while downloading the PDF.");
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPDF();
+  }, []);
 
   return (
     <>
       <div className="cv">
-        <Document
-          file="https://interns-cvs.s3.amazonaws.com/Interns+Hub+(Security).pdf"
-          onLoadSuccess={onDocumentLoadSuccess}
-        >
-          {Array.from(new Array(numPages), (el, index) => (
-            <Page key={`page_${index + 1}`} pageNumber={index + 1} />
-          ))}
-        </Document>
+        {uploadCv ? (
+          <UploadPdf />
+        ) : (
+          <ViewCv isLoading={isLoading} error={error} pdfUrl={pdfUrl} />
+        )}
         <button onClick={previewCv} className="cv-preview">
-          {uploadCv ? "edit cv" : "cv preview"}
+          {!uploadCv ? "upload cv" : "view-cv"}
         </button>
-        {uploadCv && <CVPreview />}
       </div>
     </>
   );
 }
-// s3://interns-cvs/Interns Hub (Security).pdf
+
+const ViewCv = ({ isLoading, error, pdfUrl }) => {
+  return (
+    <div>
+      {isLoading && (
+        <p>
+          fetching your cv{" "}
+          <span
+            className={`spinner-border spinner-border-sm ${
+              isLoading ? "" : "d-none"
+            }`}
+            role="status"
+            aria-hidden="true"
+          ></span>
+        </p>
+      )}
+      {error && <p>Error: {error}</p>}
+      {pdfUrl && (
+        <div className="embed-responsive embed-responsive-16by9">
+          <iframe src={pdfUrl} width="100%" height="500px" title="Intern CV" />
+        </div>
+      )}
+    </div>
+  );
+};
