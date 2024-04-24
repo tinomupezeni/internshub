@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.556.0",
     "@chatscope/chat-ui-kit-react": "^2.0.3",
     "@chatscope/chat-ui-kit-styles": "^1.4.0",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
