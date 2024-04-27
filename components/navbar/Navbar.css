@@ -1,40 +1,80 @@
-.navbar{
-   width: 100%;
-   display: flex;
-   border-bottom: 1px solid #33385515;
-   display: flex;
-   align-items: center;
-   text-align: center;
-   justify-content: space-evenly;
-   position: fixed;
-   z-index: 1;
-   background-color: #fff;
+.navbar {
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid #33385515;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: space-evenly;
+  position: fixed;
+  z-index: 1;
+  background-color: #fff;
 }
-.navbar .logo{
-   width: 12rem;
+.navbar .logo {
+  width: 12rem;
 }
 
-.navbar .logo img{
-   width: 100%;
+.navbar .logo img {
+  width: 100%;
 }
 
 .navbar .btns button {
-   width: 100px;
-   padding: 5px;
-   color: #384555;
-   font-size: 1.1rem;
-   background-color: #fff;
-   border-radius: 4px;
-   border: 1px solid #384555;
-   cursor: pointer;
-   margin: 0px 5px;
- }
+  width: 100px;
+  padding: 5px;
+  color: #384555;
+  font-size: 1.1rem;
+  background-color: #fff;
+  border-radius: 4px;
+  border: 1px solid #384555;
+  cursor: pointer;
+  margin: 0px 5px;
+}
 
- .ai-btn{
-   background-color: #384555;
-   color: #fff;
-   font-size: 1.1rem;
-   padding: 5px;
-   border-radius: 4px;
-   margin: auto 5px;
- }
+.ai-btn {
+  background-color: #384555;
+  color: #fff;
+  font-size: 1.1rem;
+  padding: 5px;
+  border-radius: 4px;
+  margin: auto 5px;
+}
+.fa-circle-user {
+  color: #384555;
+}
+.profile {
+  border: 2px solid #000;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.profile-error {
+  position: relative;
+}
+
+.red-dot {
+  position: absolute;
+  z-index: 9999999;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  box-shadow: 0 0 20px red; 
+  animation: blink 0.5s infinite alternate; 
+}
+
+@keyframes blink {
+  0% {
+    opacity: 2;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}

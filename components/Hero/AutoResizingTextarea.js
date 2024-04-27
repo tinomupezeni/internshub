@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
-const AutoResizingTextarea = ({ placeholder, onChange }) => {
+const AutoResizingTextarea = ({ placeholder, onChange ,name}) => {
   const textareaRef = useRef(null);
 
   useEffect(() => {
@@ -22,6 +22,7 @@ const AutoResizingTextarea = ({ placeholder, onChange }) => {
       rows="1"
       placeholder={placeholder}
       onChange={onChange}
+      name={name}
       style={{ width: "100%" }}
     />
   );

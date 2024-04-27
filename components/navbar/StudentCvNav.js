@@ -10,9 +10,13 @@ import {
   faUserGraduate,
   faClose,
   faComments,
+  faUserCircle,
+  faUser,
+  faGears,
 } from "@fortawesome/free-solid-svg-icons";
 import Ai from "../Student/Ai/Ai";
 import InternsSideBar from "./InternsSideBar";
+import { useNavigate } from "react-router-dom";
 
 export default function StudentCvNav() {
   const [aiChat, setAiChat] = useState(false);
@@ -36,6 +40,12 @@ export default function StudentCvNav() {
     setToggleIcon(false);
   };
 
+  const [settings, setSettings] = useState(false);
+
+  const openSettings = () => {
+    setSettings(!settings);
+  };
+
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
@@ -53,26 +63,23 @@ export default function StudentCvNav() {
           <img src={Logo} />
         </div>
         <div className="icon-links">
-          {windowWidth > 850 ? (
-            <>
-              <div className="links">
-                <NavLinks windowWidth={windowWidth} />
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="icon">
-                <i onClick={handleIcon}>
-                  <FontAwesomeIcon icon={faBars} />
-                </i>
-              </div>
-            </>
-          )}
           <button onClick={handleAi} className="ai-btn">
             <FontAwesomeIcon icon={faComments} /> ai chat
           </button>
+          <div className="icon" onClick={handleIcon}>
+            <i>
+              <FontAwesomeIcon icon={faBars} />
+            </i>
+          </div>
+          <div className="profile-error">
+            <div className="profile" onClick={openSettings}>
+              <span>t</span>
+            </div>
+            <div className="red-dot"></div>
+          </div>
         </div>
       </div>
+      {settings && <UserProfile />}
       {toggleIcon && windowWidth < 850 && (
         <>
           <div className="side-bar">
@@ -101,31 +108,34 @@ export default function StudentCvNav() {
   );
 }
 
-const NavLinks = ({ windowWidth }) => {
+const UserProfile = () => {
   return (
     <>
-      <div className="nav-links">
-        <ul>
-          {windowWidth < 850 && (
-            <Link to="/">
-              <div className="login-out-btn">
-                <button>
-                  log out <FontAwesomeIcon icon={faSignOut} />
-                </button>
+      <div className="userprofile">
+        <div className="top">
+          <img src={Logo} />
+          <button>sign out</button>
+        </div>
+        <div className="middle">
+          <i>
+            <FontAwesomeIcon icon={faUserCircle} />
+          </i>
+          <div>
+            <h3>Tinotenda</h3>
+            <p>emailsnsjsjnjwnjs@mdk.com</p>
+            <p>software engineer</p>
+          </div>
+        </div>
+        <div className="bottom">
+          <Link to="/student-profile/profile-settings">
+            <button>
+              <div className="profile-error">
+                <FontAwesomeIcon icon={faGears} /> manage account
+                <div className="red-dot"></div>
               </div>
-            </Link>
-          )}
-          <Link to="/company-departments">
-            <li>
-              <FontAwesomeIcon icon={faBuildingColumns} /> departments
-            </li>
+            </button>
           </Link>
-          <Link to="/company-potential-interns">
-            <li>
-              <FontAwesomeIcon icon={faUserGraduate} /> Interns
-            </li>
-          </Link>
-        </ul>
+        </div>
       </div>
     </>
   );

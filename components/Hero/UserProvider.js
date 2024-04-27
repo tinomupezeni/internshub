@@ -6,9 +6,17 @@ const UserContext = createContext();
 // Create a provider component
 export const UserProvider = ({ children }) => {
   const [loggedInData, setLoggedInData] = useState([]);
+  const [studentProfileData, setStudentProfileData] = useState([]);
 
   return (
-    <UserContext.Provider value={{ loggedInData, setLoggedInData }}>
+    <UserContext.Provider
+      value={{
+        loggedInData,
+        setLoggedInData,
+        studentProfileData,
+        setStudentProfileData,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

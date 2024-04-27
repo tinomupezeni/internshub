@@ -43,7 +43,30 @@ export default function Login() {
       };
     });
   };
-  const { setLoggedInData } = useUser();
+  const { setLoggedInData, setStudentProfileData } = useUser();
+
+  const profileData = (token) => {
+    Server.getstudentSettings(token).then(
+      (response) => {
+        console.log(response.data);
+        setStudentProfileData(response.data);
+      },
+      (error) => {
+        console.log(error);
+        setState((prevState) => {
+          return {
+            ...prevState,
+            errorMsg:
+              error?.response?.data?.error?.non_field_errors?.[0] ||
+              error?.response?.data?.error?.email?.[0] ||
+              error?.response?.data?.error ||
+              "an internal error has occurred, please try again",
+          };
+        });
+        resetIsLoading();
+      }
+    );
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -57,6 +80,7 @@ export default function Login() {
         Server.loginstudent(values).then(
           (response) => {
             setLoggedInData(response.data);
+            profileData(response.data.token);
             resetIsLoading();
             navigate("/student-home");
           },
@@ -187,7 +211,7 @@ export default function Login() {
               ) : null}
             </div>
             {state.errorMsg && (
-              <p className="alert alert-danger" role="alert">
+              <p className="alert alert-danger text-center" role="alert">
                 {state.errorMsg}
               </p>
             )}

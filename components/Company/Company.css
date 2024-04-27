@@ -33,6 +33,7 @@
   padding: 5px;
   display: flex;
   margin: 0 auto;
+  width: 60%;
 }
 .company ul {
   left: 2rem;
@@ -55,6 +56,9 @@
   border-radius: 4px;
 }
 
+.select{
+  padding: 20px 0;
+}
 @media screen and (max-width:850px){
   .company .ava-depts {
     padding: 1rem;

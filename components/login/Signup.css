@@ -1,7 +1,8 @@
 .sign-up {
   padding: 100px 0;
   color: #383838;
-  width: 100%;
+  width: 60%;
+  margin: 0 auto;
 }
 
 .sign-up-nav-btns button {

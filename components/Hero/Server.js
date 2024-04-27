@@ -73,19 +73,76 @@ class AuthService {
       withCredentials: true,
     });
   }
+  getAllDept(token) {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Token ${token}`,
+    };
+    return axios.get(API_URL + "company/get-all-departments/", {
+      headers,
+      withCredentials: true,
+    });
+  }
+  getAllInstitutes(token) {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Token ${token}`,
+    };
+    return axios.get(API_URL + "student/get-institutions/", {
+      headers,
+      withCredentials: true,
+    });
+  }
 
   deleteCompanyDept(dept_id, token) {
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Token ${token}`,
     };
-    return axios.delete(
-      API_URL + `company/delete-department/?dept_id=${dept_id}`,
-      {
-        headers,
-        withCredentials: true,
-      }
-    );
+    return axios.delete(`${API_URL}company/delete-department/${dept_id}/`, {
+      headers,
+      withCredentials: true,
+    });
+  }
+  updateCompanyReq(data, token) {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Token ${token}`,
+    };
+    return axios.post(`${API_URL}company/update-requirements/`, data, {
+      headers,
+      withCredentials: true,
+    });
+  }
+  deleteRequirement(req_id, token) {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Token ${token}`,
+    };
+    return axios.delete(`${API_URL}company/delete-requirement/${req_id}/`, {
+      headers,
+      withCredentials: true,
+    });
+  }
+  studentSettings(data, token) {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Token ${token}`,
+    };
+    return axios.post(`${API_URL}student/profile/settings/`, data, {
+      headers,
+      withCredentials: true,
+    });
+  }
+  getstudentSettings(token) {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Token ${token}`,
+    };
+    return axios.get(`${API_URL}student/profile/get-settings/`, {
+      headers,
+      withCredentials: true,
+    });
   }
 }
 

@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 import "./Company.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
-import { faPlusCircle, faUndo } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleMinus,
+  faCircleXmark,
+  faPlusCircle,
+  faUndo,
+} from "@fortawesome/free-solid-svg-icons";
 import AutoResizingTextarea from "../Hero/AutoResizingTextarea";
 import AddCompDept from "./AddCompDept";
 import { useUser } from "../Hero/UserProvider";
@@ -12,33 +17,16 @@ export default function CompanyProfile() {
   let navigate = useNavigate();
   const { loggedInData } = useUser();
   const [state, setState] = useState({
-    departments: [
-      "Computer Engineering",
-      "Accounting and Information Systems",
-      "Banking and Finance",
-      "Management Studies",
-      "Economics",
-      "Graduate Business School",
-      "Technology",
-      "Agriculture",
-      "Commerce",
-      "Applied Social Sciences",
-      "Arts, Culture and Heritage Studies",
-      "Science",
-      "Law",
-      "Education",
-      "Agriculture Environment",
-      "Arts And Humanities",
-      "Business Management",
-      "Veterinary Science",
-    ],
-    compDepartments: [{ newRequirement: [""] }],
+    compDepartments: [],
+    newDepartment: { department: "", newRequirement: [] },
+    compData: true,
     addDeptTemp: false,
-    newDepartment: {},
-    newDeptRequirements: [""],
+    updatedRequirements: [],
+    newRequirements: { departmentId: null, requirements: [""] },
     isLoading: false,
     errorMsg: "",
     successMsg: "",
+    activeIndex: null,
   });
 
   const setIsLoading = () => {
@@ -58,6 +46,15 @@ export default function CompanyProfile() {
     });
   };
 
+  const setActiveIndex = (id) => {
+    setState((prevState) => {
+      return {
+        ...prevState,
+        activeIndex: id,
+      };
+    });
+  };
+
   const addCompDeptBtn = () => {
     setState((prevState) => {
       return { ...prevState, addDeptTemp: !state.addDeptTemp };
@@ -65,15 +62,17 @@ export default function CompanyProfile() {
   };
   const deleteCompDeptBtn = (id) => {
     setIsLoading();
-    const data = {};
-    data.dept_id = id;
-    Server.deleteCompanyDept(data, loggedInData.token).then(
+    let dept_id = id;
+    Server.deleteCompanyDept(dept_id, loggedInData.token).then(
       (response) => {
         resetIsLoading();
         setState((prevState) => {
           return {
             ...prevState,
             successMsg: response.data.message,
+            compDepartments: prevState.compDepartments.filter(
+              (dept) => dept.departmentId !== dept_id
+            ),
           };
         });
         console.log(response);
@@ -92,74 +91,151 @@ export default function CompanyProfile() {
         console.log(error);
       }
     );
-    console.log(data);
   };
 
-  const handleRequirementChange = (event, reqIndex, depIndex) => {
-    console.log("fumc");
-    const newDepartments = [...state.compDepartments];
-    newDepartments[depIndex].requirements[reqIndex] = event.target.value;
+  const handleRequirementChange = (event, id) => {
+    const value = event.target.value;
+    const data = {};
+    data.requirementId = id;
+    data.requirement = value;
+
     setState((prevState) => {
-      return { ...prevState, compDepartments: newDepartments };
+      return { ...prevState, updatedRequirements: [data] };
     });
-
-    if (
-      reqIndex === state.compDepartments[depIndex].requirements.length - 1 &&
-      event.target.value !== "" &&
-      newDepartments[depIndex].requirements[
-        state.compDepartments[depIndex].requirements.length - 1
-      ] === ""
-    ) {
-      newDepartments[depIndex].requirements.push("");
-      setState((prevState) => ({
-        ...prevState,
-        compDepartments: newDepartments,
-      }));
-    }
   };
 
-  const handleNewRequirementChange = (event, reqIndex, depIndex) => {
-    const newDepartments = [...state.compDepartments];
-    newDepartments[depIndex].newRequirement[reqIndex] = event.target.value;
-    setState((prevState) => {
-      return { ...prevState, compDepartments: newDepartments };
-    });
+  const saveNewReq = () => {
+    const newState = { ...state };
 
-    if (
-      reqIndex === state.compDepartments[depIndex].newRequirement.length - 1 &&
-      event.target.value !== ""
-    ) {
-      newDepartments[depIndex].newRequirement.push("");
-      setState((prevState) => ({
-        ...prevState,
-        compDepartments: newDepartments,
-      }));
-    } else if (
-      reqIndex === state.compDepartments[depIndex].newRequirement.length - 2 &&
-      event.target.value === ""
-    ) {
-      newDepartments[depIndex].newRequirement.pop();
-      setState((prevState) => ({
-        ...prevState,
-        compDepartments: newDepartments,
-      }));
+    for (const departmentId in newRequirements) {
+      const departmentIdInt = parseInt(departmentId, 10);
+
+      const departmentNewRequirements = newRequirements[departmentId];
+
+      const nonEmptyRequirements = departmentNewRequirements.filter(
+        (requirement) => requirement !== ""
+      );
+
+      if (nonEmptyRequirements.length > 0) {
+        newState.updatedRequirements.push({
+          departmentId: departmentIdInt,
+          requirements: nonEmptyRequirements,
+        });
+      }
     }
-  };
-  
 
-  useEffect(() => {
-    Server.getCompanyDept(loggedInData.token).then(
+    // Update the state
+    setState(newState);
+
+    Server.updateCompanyReq(
+      newState.updatedRequirements,
+      loggedInData.token
+    ).then(
       (response) => {
-        const updatedCompDepartments = response.data.map((dept) => ({
-          ...dept,
-          newRequirement: [""],
-        }));
         setState((prevState) => {
           return {
             ...prevState,
-            compDepartments: updatedCompDepartments,
+            successMsg: response.data.message,
           };
         });
+        fetchData();
+      },
+      (error) => {
+        setState((prevState) => {
+          return {
+            ...prevState,
+            errorMsg: error.response.data.message,
+          };
+        });
+      }
+    );
+
+    console.log(newState.updatedRequirements);
+    newState.updatedRequirements = [];
+  };
+
+  const [newRequirements, setNewRequirements] = useState({});
+
+  const handleNewRequirementChange = (event, deptIndex, index) => {
+    const newRequirementsCopy = { ...newRequirements };
+
+    // Get the departmentId of the current department
+    const departmentId = deptIndex;
+
+    // If newRequirements for this departmentId doesn't exist, initialize it
+    if (!newRequirementsCopy[departmentId]) {
+      newRequirementsCopy[departmentId] = [""];
+    }
+
+    // Update the requirement at the given index
+    newRequirementsCopy[departmentId][index] = event.target.value;
+
+    // If the updated requirement is not empty and it's the last one, add a new empty requirement
+    if (
+      event.target.value !== "" &&
+      index === newRequirementsCopy[departmentId].length - 1
+    ) {
+      newRequirementsCopy[departmentId].push("");
+    }
+
+    if (
+      event.target.value === "" &&
+      newRequirementsCopy[departmentId].length > 1
+    ) {
+      newRequirementsCopy[departmentId].splice(index, 1);
+    }
+
+    setNewRequirements(newRequirementsCopy);
+  };
+
+  const deleteReq = (id) => {
+    console.log(id);
+    Server.deleteRequirement(id, loggedInData.token).then(
+      (response) => {
+        setState((prevState) => {
+          return {
+            ...prevState,
+            successMsg: response.data.message,
+          };
+        });
+        fetchData();
+      },
+      (error) => {
+        setState((prevState) => {
+          return {
+            ...prevState,
+            errorMsg: error.response.data.message,
+          };
+        });
+      }
+    );
+  };
+
+  const fetchData = () => {
+    Server.getCompanyDept(loggedInData.token).then(
+      (response) => {
+        console.log(response.data);
+        if (response.data.length === 0) {
+          setState((prevState) => {
+            return {
+              ...prevState,
+              compData: true,
+              compDepartments: [],
+            };
+          });
+        } else {
+          const updatedCompDepartments = response.data.map((dept) => ({
+            ...dept,
+            newRequirements: [""],
+          }));
+          setState((prevState) => {
+            return {
+              ...prevState,
+              compData: false,
+              compDepartments: updatedCompDepartments,
+            };
+          });
+        }
       },
       (error) => {
         if (error.response && error.response.status === 401) {
@@ -167,61 +243,120 @@ export default function CompanyProfile() {
         }
       }
     );
-  });
+  };
+
+  useEffect(fetchData, []);
+
+  useEffect(() => {
+    const handleDismissError = (event) => {
+      if (
+        (state.errorMsg || state.successMsg) &&
+        !event.target.closest(".alert")
+      ) {
+        setState((prevState) => {
+          return {
+            ...prevState,
+            errorMsg: "",
+            successMsg: "",
+          };
+        });
+      }
+    };
+
+    window.addEventListener("click", handleDismissError);
+
+    return () => {
+      window.removeEventListener("click", handleDismissError);
+    };
+  }, [state.errorMsg, state.successMsg]);
   return (
     <>
       <div className="company">
-        <h1>{loggedInData.name}</h1>
-        <h4>your departments</h4>
+        <h1 className="display-4">
+          <b>{loggedInData.name}</b>
+        </h1>
         <p>
-          add or remove departments with the necessary requirements for interns
-          to meet
+          Enhance your organization by adding or removing departments, each with
+          its own set of requirements for interns.
         </p>
-        {!state.addDeptTemp ? (
-          <div className="ava-depts">
-            {state.compDepartments.map((dep, index) => (
-              <ul key={index}>
-                <h4>{dep.department}</h4>
-                <div style={{ marginLeft: "50px" }}>
-                  <Requirements
-                    requirements={dep.requirements}
-                    newRequirement={dep.newRequirement}
-                    index={index}
-                    handleNewRequirementChange={handleNewRequirementChange}
-                    handleRequirementChange={handleRequirementChange}
-                  />
-                </div>
-                {state.errorMsg && (
-                  <p className="alert alert-danger" role="alert">
-                    {state.errorMsg}
-                  </p>
-                )}
-                {state.successMsg && (
-                  <p className="alert alert-success" role="alert">
-                    {state.successMsg}
-                  </p>
-                )}
-                <button
-                  className="btn btn-danger"
-                  onClick={() => deleteCompDeptBtn(dep.departmentId)}
-                >
-                  delete{" "}
-                  <span
-                    className={`spinner-border spinner-border-sm ${
-                      state.isLoading ? "" : "d-none"
-                    }`}
-                    role="status"
-                    aria-hidden="true"
-                  ></span>
-                </button>
-              </ul>
-            ))}
-          </div>
-        ) : (
+
+        {state.successMsg && (
+          <p className="alert alert-success text-center" role="alert">
+            {state.successMsg}
+          </p>
+        )}
+        {state.addDeptTemp && (
           <>
-            <AddCompDept />
+            <AddCompDept fetchData={fetchData} />
           </>
         )}
+        <>
+          <div className="ava-depts">
+            {state.compDepartments &&
+              state.compDepartments.map((dep, deptIndex) => (
+                <ul key={deptIndex}>
+                  <h4>{dep.department}</h4>
+                  <p>feel free to edit your requirements</p>
+                  <div style={{ marginLeft: "50px" }}>
+                    <Requirements
+                      requirements={dep.requirements}
+                      newRequirements={
+                        newRequirements[dep.departmentId] || [""]
+                      }
+                      deptIndex={dep.departmentId}
+                      handleNewRequirementChange={handleNewRequirementChange}
+                      handleRequirementChange={handleRequirementChange}
+                      deleteReq={deleteReq}
+                    />
+                  </div>
+                  {state.errorMsg && (
+                    <p className="alert alert-danger text-center" role="alert">
+                      {state.errorMsg}
+                    </p>
+                  )}
+                  <div className="row">
+                    <div className="col">
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => deleteCompDeptBtn(dep.departmentId)}
+                      >
+                        delete{" "}
+                        <span
+                          className={`spinner-border spinner-border-sm ${
+                            state.isLoading ? "" : "d-none"
+                          }`}
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
+                      </button>
+                    </div>
+                    <div className="col">
+                      <button
+                        className="btn btn-success"
+                        onClick={() => saveNewReq()}
+                      >
+                        save{" "}
+                        <span
+                          className={`spinner-border spinner-border-sm ${
+                            state.isLoading ? "" : "d-none"
+                          }`}
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
+                      </button>
+                    </div>
+                  </div>
+                </ul>
+              ))}
+          </div>
+          {state.compData && (
+            <p className="alert alert-warning text-center">
+              no requirements available, use the button below to add a
+              requirement
+            </p>
+          )}
+        </>
+
         <button className="new-dept" onClick={addCompDeptBtn}>
           {state.addDeptTemp ? (
             <FontAwesomeIcon icon={faUndo} />
@@ -236,40 +371,47 @@ export default function CompanyProfile() {
 
 const Requirements = ({
   requirements,
-  newRequirement,
-  index,
+  newRequirements,
   handleNewRequirementChange,
   handleRequirementChange,
+  deptIndex,
+  deleteReq,
 }) => {
   return (
     <>
       {requirements &&
         requirements.map((requirem, reqIndex) => (
           <div key={reqIndex} className="mb-3">
-            <li>
+            <li className="d-flex justify-content-between align-items-center">
               <AutoResizingTextarea
                 name={`requirement${reqIndex}`}
-                value={requirem}
+                value={requirem.requirement}
                 style={{ width: "100%", border: "1px solid" }}
                 className="form-control"
-                onChange={(event) =>
-                  handleRequirementChange(event, reqIndex, index)
+                onChange={(e) =>
+                  handleRequirementChange(e, requirem.requirementId)
                 }
-                placeholder={requirem}
+                placeholder={requirem.requirement}
               />
+              <i
+                className="btn btn-danger"
+                onClick={() => deleteReq(requirem.requirementId)}
+              >
+                <FontAwesomeIcon icon={faCircleXmark} />
+              </i>
             </li>
           </div>
         ))}
-      {newRequirement.map((requirem, reqIndex) => (
+      {newRequirements.map((requirem, index) => (
         <div key={index} className="mb-3">
           <li>
             <AutoResizingTextarea
-              name={`newRequirement${reqIndex}`}
+              name={`newRequirement${index}`}
               value={requirem}
               style={{ width: "100%" }}
               className="form-control"
               onChange={(event) =>
-                handleNewRequirementChange(event, reqIndex, index)
+                handleNewRequirementChange(event, deptIndex, index)
               }
               placeholder="Add new requirement"
             />

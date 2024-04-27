@@ -3,6 +3,7 @@ import "./StudHome.css";
 import WelcomeAi from "../Ai/WelcomeAi";
 
 export default function StudHome() {
+  
   return (
     <>
       <div className="stud-welcome">

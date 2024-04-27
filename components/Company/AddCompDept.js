@@ -1,36 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AutoResizingTextarea from "../Hero/AutoResizingTextarea";
 import Server from "../Hero/Server";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../Hero/UserProvider";
 
-export default function AddCompDept() {
+export default function AddCompDept(props) {
   const { loggedInData } = useUser();
-
   let navigate = useNavigate();
   const [state, setState] = useState({
-    departments: [
-      "Computer Engineering",
-      "Accounting and Information Systems",
-      "Banking and Finance",
-      "Management Studies",
-      "Economics",
-      "Graduate Business School",
-      "Technology",
-      "Agriculture",
-      "Commerce",
-      "Applied Social Sciences",
-      "Arts, Culture and Heritage Studies",
-      "Science",
-      "Law",
-      "Education",
-      "Agriculture Environment",
-      "Arts And Humanities",
-      "Business Management",
-      "Veterinary Science",
-    ],
+    departments: [],
     addDeptTemp: false,
-    newDepartment: { department: "", newRequirement: [""] },
+    newDepartment: { departmentId: null, department: "", newRequirement: [] },
     newDeptRequirements: [""],
     isLoading: false,
     errorMsg: "",
@@ -55,8 +35,10 @@ export default function AddCompDept() {
   };
 
   const compAddDept = (e) => {
+    const dep = JSON.parse(e.target.value);
     const newDepart = {
-      department: e.target.value,
+      departmentId: dep.departmentId,
+      department: dep.department,
       newRequirement: [""],
     };
     setState((prevState) => {
@@ -109,32 +91,50 @@ export default function AddCompDept() {
 
   const addDept = () => {
     setIsLoading();
-    console.log(loggedInData.token);
-    Server.addCompanyDept(state.newDepartment, loggedInData.token).then(
-      (response) => {
-        resetIsLoading();
-        setState((prevState) => {
-          return {
-            ...prevState,
-            successMsg: response.data.message,
-          };
-        });
-        console.log(response);
-      },
-      (error) => {
-        resetIsLoading();
-        if (error.response && error.response.status === 401) {
-          navigate("/log-in");
+    const newDepartment = {
+      departmentId: state.newDepartment.departmentId,
+      department: state.newDepartment.department,
+      newRequirement: state.newDepartment.newRequirement.filter(
+        (req) => req.trim() !== ""
+      ),
+    };
+    if (newDepartment.newRequirement.length === 0) {
+      setState((prevState) => {
+        return {
+          ...prevState,
+          errorMsg: "please add at least one requirement",
+        };
+      });
+      resetIsLoading();
+      return;
+    } else {
+      Server.addCompanyDept(newDepartment, loggedInData.token).then(
+        (response) => {
+          resetIsLoading();
+          props.fetchData();
+          setState((prevState) => {
+            return {
+              ...prevState,
+              successMsg: response.data.message,
+            };
+          });
+          fetchDept();
+        },
+        (error) => {
+          resetIsLoading();
+          if (error.response && error.response.status === 401) {
+            navigate("/log-in");
+          }
+          setState((prevState) => {
+            return {
+              ...prevState,
+              errorMsg: error.response.data.message,
+            };
+          });
+          console.log(error);
         }
-        setState((prevState) => {
-          return {
-            ...prevState,
-            errorMsg: error.response.data.message,
-          };
-        });
-        console.log(error);
-      }
-    );
+      );
+    }
   };
   const removeDept = () => {
     const newDepart = {
@@ -149,19 +149,68 @@ export default function AddCompDept() {
     });
   };
 
+  const fetchDept = () => {
+    Server.getAllDept(loggedInData.token).then(
+      (response) => {
+        setState((prevState) => {
+          return {
+            ...prevState,
+            departments: response.data,
+          };
+        });
+      },
+      (error) => {
+        console.log(error);
+        setState((prevState) => {
+          return {
+            ...prevState,
+            errorMsg: error.response.data,
+          };
+        });
+      }
+    );
+  };
+
+  useEffect(fetchDept, []);
+
+  useEffect(() => {
+    const handleDismissError = (event) => {
+      if (
+        (state.errorMsg || state.successMsg) &&
+        !event.target.closest(".alert")
+      ) {
+        setState((prevState) => {
+          return {
+            ...prevState,
+            errorMsg: "",
+            successMsg: "",
+          };
+        });
+      }
+    };
+
+    window.addEventListener("click", handleDismissError);
+
+    return () => {
+      window.removeEventListener("click", handleDismissError);
+    };
+  }, [state.errorMsg, state.successMsg]);
+
   return (
     <>
       {!state.newDepartment.department ? (
-        <div className="login">
-          <label for="departmentSelect">Select Department</label>
+        <div className="select">
           <select
             id="departmentSelect"
             class="form-select"
             onChange={(e) => compAddDept(e)}
           >
+            <option selected disabled>
+              Select a department
+            </option>
             {state.departments.map((dep, index) => (
-              <option value={dep} key={index}>
-                {dep}
+              <option value={JSON.stringify(dep)} key={index}>
+                {dep.department}
               </option>
             ))}
           </select>
@@ -189,12 +238,12 @@ export default function AddCompDept() {
               ))}
             </div>
             {state.errorMsg && (
-              <p className="alert alert-danger" role="alert">
+              <p className="alert alert-danger text-center" role="alert">
                 {state.errorMsg}
               </p>
             )}
             {state.successMsg && (
-              <p className="alert alert-success" role="alert">
+              <p className="alert alert-success text-center" role="alert">
                 {state.successMsg}
               </p>
             )}

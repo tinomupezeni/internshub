@@ -31,7 +31,7 @@
   color: rgb(0, 89, 255);
   background-color: transparent;
   font-size: 1rem;
-  margin: 0 0 0 5px;
+  /* margin: 0 0 0 5px; */
 }
 .login-out-btn {
   width: 150px;
@@ -56,6 +56,7 @@
   background-color: #dfdede;
   border-radius: 50px;
   padding: 5px 10px;
+  margin: 0 5px;
 }
 .nav-links ul {
   display: flex;
