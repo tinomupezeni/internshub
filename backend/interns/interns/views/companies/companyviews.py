@@ -1,4 +1,3 @@
-import json
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -6,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import User
 from interns.models import Company
+
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
@@ -17,15 +17,15 @@ def signup_company(request):
         password = data.get("compPassword")
 
         try:
-            comp = User.objects.get(username=email)
+            user = User.objects.get(username=email)
         except User.DoesNotExist:
-            comp = User.objects.create_user(
+            user = User.objects.create_user(
                 username=email, first_name=name, password=password
             )
-            comp.save()
+            user.save()
 
             company = Company.objects.create(
-                comp=comp,
+                user=user,
                 compName=name,
                 compEmail=email,
             )

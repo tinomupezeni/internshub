@@ -25,31 +25,22 @@ from rest_framework.decorators import (
 @permission_classes([IsAuthenticated])
 @csrf_exempt
 @transaction.atomic
-def delete_department(request, dept_id):
+def delete_requirement(request, req_id):
     if request.method == "DELETE":
-        user = request.user
-        data = request.data
-        company = Company.objects.get(user=user)
-
         try:
-            department = Departments.objects.get(deptId=dept_id)
-            compDepartment = CompDepartment.objects.get(
-                company=company, department=department
-            )
+            requirement = Requirement.objects.get(requirementId=req_id)
 
-            DeptRequirement.objects.filter(
-                department=compDepartment.department
-            ).delete()
+            DeptRequirement.objects.filter(requirement=requirement).delete()
 
-            compDepartment.delete()
+            Requirement.objects.filter(requirementId=req_id).delete()
 
             return JsonResponse(
-                {"message": "Department and its requirements successfully deleted"},
+                {"message": "requirement successfully deleted"},
                 status=200,
             )
 
-        except (CompDepartment.DoesNotExist, Departments.DoesNotExist):
-            return JsonResponse({"message": "Department not found"}, status=404)
+        except:
+            return JsonResponse({"message": "failed to delete requirement"}, status=404)
 
     else:
         return JsonResponse({"message": "Invalid request method"}, status=405)

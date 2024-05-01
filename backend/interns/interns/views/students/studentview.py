@@ -4,11 +4,13 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import User
-from interns.models import Student
+from interns.models import Student, StudentProfile
+from django.db import transaction
 
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
+@transaction.atomic
 def signup_student(request):
     if request.method == "POST":
         data = request.data
@@ -27,12 +29,19 @@ def signup_student(request):
             )
             user.save()
             student = Student.objects.create(
-                user=user,
-                studentName=name,
-                studentSurname=surname,
-                studentEmail=email
+                user=user, studentName=name, studentSurname=surname, studentEmail=email
             )
             student.save()
+            
+            stud = Student.objects.get(user=user)
+            studentProfile = StudentProfile.objects.create(
+                student=stud,
+                institution=None,
+                program=None,
+                introduction=None,
+                department=None,
+            )
+            studentProfile.save()
 
             return Response(
                 {"message": "Signup successful"}, status=status.HTTP_201_CREATED

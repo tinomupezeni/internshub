@@ -20,13 +20,13 @@ def login_student(request):
             if user is not None:
                 student = Student.objects.get(user=user)
                 token, created = Token.objects.get_or_create(user=user)
-                return JsonResponse(
-                    {
-                        "token": token.key,
-                        "name": student.studentName,
-                        "surname": student.studentSurname,
-                    }
-                )
+                response = {
+                    "name": student.studentName,
+                    "surname": student.studentSurname,
+                    "email": student.studentEmail,
+                    "token": token.key,
+                }
+                return JsonResponse(response, status=200)
             else:
                 return JsonResponse({"error": "Invalid credentials"}, status=400)
         else:
@@ -50,7 +50,7 @@ class StudentLoginSerializer(serializers.Serializer):
             user = User.objects.get(username=email)
         except User.DoesNotExist:
             raise serializers.ValidationError(
-                "email not found,please verify email and log in status above"
+                "email not found,please verify email and log in status above or if you haven't signed up please do so"
             )
 
         if not user.check_password(password):

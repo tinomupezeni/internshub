@@ -1,13 +1,6 @@
 from django.http import JsonResponse
-from django.db import transaction
-
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from rest_framework import status
-from django.contrib.auth.models import User
+from django.db.models import Q
 from interns.models import CompDepartment
-from interns.models import Requirement
 from interns.models import Departments
 from interns.models import DeptRequirement
 from interns.models import Company
@@ -34,7 +27,10 @@ def get_compdept_data(request):
                 "departmentId": compDepartment.department.deptId,
                 "department": compDepartment.department.deptName,
                 "requirements": [
-                    req.requirement.requirement
+                    {
+                        "requirementId": req.requirement.requirementId,
+                        "requirement": req.requirement.requirement,
+                    }
                     for req in DeptRequirement.objects.filter(
                         department=compDepartment.department
                     )
@@ -44,6 +40,38 @@ def get_compdept_data(request):
         ]
 
         return JsonResponse(compDepartment_data, safe=False)
+
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@api_view(["GET"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_alldepts_data(request):
+    if request.method == "GET":
+        user = request.user
+        company = Company.objects.get(user=user)
+
+        compDepartments = CompDepartment.objects.filter(company=company)
+        allDepartments = Departments.objects.all()
+
+        # Get departments not in compDepartments
+        departments_not_in_compDepartments = allDepartments.exclude(
+            deptId__in=[
+                compDepartment.department.deptId for compDepartment in compDepartments
+            ]
+        )
+
+        department_data = [
+            {
+                "departmentId": department.deptId,
+                "department": department.deptName,
+            }
+            for department in departments_not_in_compDepartments
+        ]
+
+        return JsonResponse(department_data, safe=False)
 
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)

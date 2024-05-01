@@ -20,7 +20,11 @@ def login_company(request):
             if user is not None:
                 company = Company.objects.get(user=user)
                 token, created = Token.objects.get_or_create(user=user)
-                return JsonResponse({"token": token.key, "name": company.compName})
+                response = {
+                    "name": company.compName,
+                    "token": token.key,
+                }
+                return JsonResponse(response, status=200)
             else:
                 return JsonResponse({"error": "Invalid credentials"}, status=400)
         else:
@@ -44,7 +48,7 @@ class CompanyLoginSerializer(serializers.Serializer):
             company = User.objects.get(username=email)
         except User.DoesNotExist:
             raise serializers.ValidationError(
-                "email not found,please verify email and log in status above"
+                "email not found,please verify email and log in status above or if you haven't signed up please do so"
             )
 
         if not company.check_password(password):
