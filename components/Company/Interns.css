@@ -1,53 +1,71 @@
-.interns {
-  padding: 80px 10px;
-}
-.interns-data {
-  display: flex;
-  flex-direction: column;
- 
-}
-.interns-heading {
-  padding: 15px 0;
+.comp-interns {
+  padding: 80px 20px;
 }
 
-.interns-heading h3 {
-  padding: 10px 0;
-}
-.interns-data .intern {
-  display: flex;
-  
-  padding: 10px 5px;
-  margin: 10px 0;
-  border-bottom: 1px solid;
-  cursor: pointer;
-  padding: 5px;
-  margin: 5px;
-  transition: 0.3s ease-in-out;
+.comp-interns-data ul{
+  padding: 1rem;
   width: 100%;
- 
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-around;
+  align-items: start;
+  flex-wrap: wrap;
+  z-index: 9999;
 }
-.intern button{
+.comp-interns-data .intern {
   padding: 10px;
-  font-size: 1 rem;
-  background-color: #0059ff;
-  color: #fff;
-  width: 60%;
   margin: 0 auto;
   border-radius: 4px;
+  width: 400px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.555);
 }
 
-.video{
-height: 50vh;
-overflow-x: hidden;
-}
-
-
-.video-info {
+.icon-intern {
+  background-color: #384555;
+  color: #fff;
+  padding: 10px 25px;
+  border-radius: 50%;
+  font-size: 3rem;
+  align-items: center;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  text-align: center;
+  margin-right: 15px;
+}
+
+.intern-pers-data {
+  display: flex;
+  margin-top: 10px;
+}
+
+.intern-pers-data div {
+  display: flex;
   flex-direction: column;
-  width: 40%;
-  padding: 5px ;
+  /* align-items: center; */
+  text-align: start;
+  justify-content: center;
+}
+
+.intern-pers-data {
+   margin-bottom: 20px;
+}
+
+.intern-pers-data .in-data h4{
+   padding: 0;
+   margin: 0;
+}
+.intern-pers-data .in-data  p{
+   padding: 0;
+   margin: 0;
+}
+
+.intern Button {
+  width: 100%;
 }
 
 
+@media screen and (max-width: 400px) {
+  .comp-interns-data .intern {
+    width: 90%;
+  }
+}

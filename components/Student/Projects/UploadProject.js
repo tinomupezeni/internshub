@@ -1,6 +1,5 @@
 import React from "react";
 import UploadProjAi from "../Ai/UploadProjAi";
-import Button from "react-bootstrap/Button";
 import "./UploadProject.css";
 
 export default function UploadProject() {
@@ -15,7 +14,6 @@ export default function UploadProject() {
           </p>
         </div>
         <UploadProjAi />
-        <Button>understood, proceed</Button>
       </div>
     </>
   );

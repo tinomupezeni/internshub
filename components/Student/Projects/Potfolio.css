@@ -1,13 +1,40 @@
-.potfolio{
-  padding: 80px 10px;
+.interns-data {
+  padding: 1rem;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-around;
+  align-items: start;
+  flex-wrap: wrap;
+  z-index: 9999;
 }
-.potfolio button {
-  background-color: #333855;
-  color: #fff;
-  position: fixed;
-  bottom: 10px;
-  right: 2px;
-  padding: 8px;
+.interns ul {
+  width: auto;
+  padding: 10px;
+  padding: 5px;
   border-radius: 4px;
-  font-size: 1.1rem;
+  width: 40%;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.555);
+}
+
+.video-responsive {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+}
+
+.video-responsive iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+}
+
+@media screen and (max-width: 850px) {
+  .interns ul {
+    width: 100%;
+  }
 }

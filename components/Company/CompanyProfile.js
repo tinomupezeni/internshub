@@ -10,12 +10,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import AutoResizingTextarea from "../Hero/AutoResizingTextarea";
 import AddCompDept from "./AddCompDept";
-import { useUser } from "../Hero/UserProvider";
 import Server from "../Hero/Server";
+import secureLocalStorage from "react-secure-storage";
 
 export default function CompanyProfile() {
   let navigate = useNavigate();
-  const { loggedInData } = useUser();
+  const loggedInData = secureLocalStorage.getItem("loggedInData");
   const [state, setState] = useState({
     compDepartments: [],
     newDepartment: { department: "", newRequirement: [] },
@@ -212,9 +212,8 @@ export default function CompanyProfile() {
   };
 
   const fetchData = () => {
-    Server.getCompanyDept(loggedInData.token).then(
+    Server.getCompanyDept().then(
       (response) => {
-        console.log(response.data);
         if (response.data.length === 0) {
           setState((prevState) => {
             return {

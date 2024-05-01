@@ -3,16 +3,17 @@ import { Document, Page } from "@react-pdf/renderer";
 import axios from "axios";
 import "./CV.css";
 import UploadPdf from "../../Hero/UploadPdf";
-import { useUser } from "../../Hero/UserProvider"
+import { useUser } from "../../Hero/UserProvider";
 
 const API_URL = "http://localhost:8000/";
 
 export default function CV() {
+  const token = localStorage.getItem("token");
   const [pdfUrl, setPdfUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [uploadCv, setUploadCv] = useState(false);
-  const { loggedInData } = useUser();
+  const {} = useUser();
 
   const previewCv = () => {
     setUploadCv(!uploadCv);
@@ -24,7 +25,7 @@ export default function CV() {
       try {
         const response = await axios.get(API_URL + "student/cv/", {
           headers: {
-            Authorization: `Token ${loggedInData.token}`,
+            Authorization: `Token ${token}`,
           },
         });
         if (response.status === 200) {
@@ -75,8 +76,17 @@ const ViewCv = ({ isLoading, error, pdfUrl }) => {
       )}
       {error && <p>Error: {error}</p>}
       {pdfUrl && (
-        <div className="embed-responsive embed-responsive-16by9">
-          <iframe src={pdfUrl} width="100%" height="500px" title="Intern CV" />
+        <div className="card">
+          <div className="card-body">
+            <div className="embed-responsive embed-responsive-16by9">
+              <iframe
+                src={pdfUrl}
+                width="100%"
+                height="500px"
+                title="Intern CV"
+              />
+            </div>
+          </div>
         </div>
       )}
     </div>

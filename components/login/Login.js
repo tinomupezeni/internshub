@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import CategoryInto from "./signup-components/CategoryIntro";
 import DOMPurify from "dompurify";
 import Server from "../Hero/Server";
+import secureLocalStorage from "react-secure-storage";
 
 export default function Login() {
   const [state, setState] = useState({
@@ -43,16 +44,15 @@ export default function Login() {
       };
     });
   };
-  const { setLoggedInData, setStudentProfileData } = useUser();
 
-  const profileData = (token) => {
-    Server.getstudentSettings(token).then(
+  const profileData = () => {
+    Server.getstudentSettings().then(
       (response) => {
-        console.log(response.data);
-        setStudentProfileData(response.data);
+        resetIsLoading();
+        secureLocalStorage.setItem("studentProfileData", response.data);
+        navigate("/student-home");
       },
       (error) => {
-        console.log(error);
         setState((prevState) => {
           return {
             ...prevState,
@@ -79,10 +79,9 @@ export default function Login() {
       if (state.status === "student") {
         Server.loginstudent(values).then(
           (response) => {
-            setLoggedInData(response.data);
-            profileData(response.data.token);
-            resetIsLoading();
-            navigate("/student-home");
+            secureLocalStorage.clear();
+            secureLocalStorage.setItem("loggedInData", response.data);
+            profileData();
           },
           (error) => {
             console.log(error);
@@ -109,7 +108,9 @@ export default function Login() {
         });
         Server.logincompany(values).then(
           (response) => {
-            setLoggedInData(response.data);
+            secureLocalStorage.clear();
+            secureLocalStorage.setItem("loggedInData", response.data);
+            console.log(response.data);
             resetIsLoading();
             navigate("/company-departments");
           },

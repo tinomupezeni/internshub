@@ -5,9 +5,13 @@ import "./Settings.css";
 import { useFormik } from "formik";
 import AutoResizingTextarea from "../../Hero/AutoResizingTextarea";
 import DOMPurify from "dompurify";
+import { useNavigate } from "react-router-dom";
+import secureLocalStorage from "react-secure-storage";
 
 export default function Settings() {
-  const { loggedInData } = useUser();
+  const studentProfileData = secureLocalStorage.getItem("studentProfileData");
+  const loggedInData = secureLocalStorage.getItem("loggedInData");
+  let navigate = useNavigate();
   const [state, setState] = useState({
     departments: [],
     institution: [],
@@ -34,6 +38,28 @@ export default function Settings() {
         isLoading: false,
       };
     });
+  };
+  const { setStudentProfileData } = useUser();
+  const profileData = (token) => {
+    Server.getstudentSettings(token).then(
+      (response) => {
+        secureLocalStorage.removeItem("studentProfileData");
+        secureLocalStorage.setItem("studentProfileData", response.data);
+      },
+      (error) => {
+        setState((prevState) => {
+          return {
+            ...prevState,
+            errorMsg:
+              error?.response?.data?.error?.non_field_errors?.[0] ||
+              error?.response?.data?.error?.email?.[0] ||
+              error?.response?.data?.error ||
+              "an internal error has occurred, please try again",
+          };
+        });
+        resetIsLoading();
+      }
+    );
   };
   const handleSanitize = (event) => {
     const sanitizedValue = DOMPurify.sanitize(event.target.value);
@@ -62,13 +88,13 @@ export default function Settings() {
       }
       console.log(data);
       Server.studentSettings(data, loggedInData.token).then(
-        () => {
+        (response) => {
           resetIsLoading();
-          // navigate("/log-in");
+          profileData();
           setState((prevState) => {
             return {
               ...prevState,
-              successMsg: error.response.data.error,
+              successMsg: response.data.message,
             };
           });
         },
@@ -88,27 +114,6 @@ export default function Settings() {
       );
     },
   });
-  const fetchDept = () => {
-    //  Server.getAllDept(loggedInData.token).then(
-    //    (response) => {
-    //      setState((prevState) => {
-    //        return {
-    //          ...prevState,
-    //          departments: response.data,
-    //        };
-    //      });
-    //    },
-    //    (error) => {
-    //      console.log(error);
-    //      setState((prevState) => {
-    //        return {
-    //          ...prevState,
-    //          errorMsg: error.response.data,
-    //        };
-    //      });
-    //    }
-    //  );
-  };
 
   const compAddDept = (e) => {
     const dep = JSON.parse(e.target.value);
@@ -129,9 +134,6 @@ export default function Settings() {
     });
   };
 
-  
-
-  useEffect(fetchDept, []);
   useEffect(() => {
     const handleDismissError = (event) => {
       if (
@@ -154,6 +156,20 @@ export default function Settings() {
       window.removeEventListener("click", handleDismissError);
     };
   }, [state.errorMsg, state.successMsg]);
+
+  useEffect(() => {
+    if (!studentProfileData.departments || !studentProfileData.institutions) {
+      navigate("/log-in");
+    } else {
+      setState((prevState) => {
+        return {
+          ...prevState,
+          departments: studentProfileData.departments,
+          institution: studentProfileData.institutions,
+        };
+      });
+    }
+  }, []);
   return (
     <>
       <div className="settings">
@@ -165,9 +181,15 @@ export default function Settings() {
             to do it.
           </p>
         </div>
-        <p className="alert alert-danger text-center">
-          please complete your profile
-        </p>
+        {(!studentProfileData.program ||
+          !studentProfileData.introduction ||
+          !studentProfileData.department ||
+          !studentProfileData.institution) && (
+          <p className="alert alert-danger text-center">
+            please complete your profile
+          </p>
+        )}
+
         <SettingsInput
           formik={formik}
           handleSanitize={handleSanitize}
@@ -176,6 +198,7 @@ export default function Settings() {
           isLoading={state.isLoading}
           compAddDept={compAddDept}
           departments={state.departments}
+          studentProfileData={studentProfileData}
         />
       </div>
     </>
@@ -190,21 +213,29 @@ const SettingsInput = ({
   isLoading,
   compAddDept,
   departments,
+  studentProfileData,
 }) => {
   return (
     <>
       <form onSubmit={formik.handleSubmit}>
         <>
           <div className="comp-signup settings-input">
-            <div className="select">
-              <label>department</label>
+            <div className="select profile-error">
+              <label>
+                {!studentProfileData.student_profile.department && (
+                  <div className="red-dot"></div>
+                )}
+                department
+              </label>
               <select
                 id="departmentSelect"
                 class="form-select"
                 onChange={(e) => compAddDept(e)}
               >
                 <option selected disabled>
-                  Select your department
+                  {studentProfileData.student_profile.department
+                    ? studentProfileData.student_profile.department
+                    : "Select your department"}
                 </option>
                 {departments &&
                   departments.map((dep, index) => (
@@ -215,14 +246,26 @@ const SettingsInput = ({
               </select>
             </div>
             <div className="select">
-              <label>institution</label>
+              <div>
+                <label
+                  style={{ width: "auto", border: "1px solid #000" }}
+                  className="profile-error"
+                >
+                  {!studentProfileData.student_profile.institution && (
+                    <div className="red-dot"></div>
+                  )}
+                  institution
+                </label>
+              </div>
               <select
                 id="departmentSelect"
                 class="form-select"
                 onChange={(e) => selectInst(e)}
               >
                 <option selected disabled>
-                  Select your institution
+                  {studentProfileData.student_profile.institution
+                    ? studentProfileData.student_profile.institution
+                    : "Select your institution"}
                 </option>
                 {institution &&
                   institution.map((inst, index) => (
@@ -233,17 +276,32 @@ const SettingsInput = ({
               </select>
             </div>
             <div>
-              <label>study program</label>
+              <label>
+                {!studentProfileData.student_profile.program && (
+                  <div className="red-dot"></div>
+                )}
+                study program
+              </label>
               <input
                 name="studyProgram"
                 type="text"
                 onChange={formik.handleChange}
                 value={formik.values.studyProgram}
-                placeholder="Software engineering"
+                placeholder={
+                  studentProfileData.student_profile.program ||
+                  "Software engineering"
+                }
               />
             </div>
             <div>
-              <label>self introduction</label>
+              <label className="profile-error">
+                <div>
+                  {!studentProfileData.student_profile.introduction && (
+                    <div className="red-dot"></div>
+                  )}
+                  self introduction
+                </div>
+              </label>
               <div
                 style={{
                   width: "100%",

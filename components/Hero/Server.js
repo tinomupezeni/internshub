@@ -1,8 +1,12 @@
 import axios from "axios";
+import secureLocalStorage from "react-secure-storage";
 
 const API_URL = "http://localhost:8000/";
 
 class AuthService {
+  get token() {
+    return secureLocalStorage.getItem("loggedInData")?.token;
+  }
   loginstudent(data) {
     const headers = {
       "Content-Type": "application/json",
@@ -24,11 +28,15 @@ class AuthService {
   }
 
   logout() {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Token ${this.token}`,
+    };
     return axios.post(
-      API_URL + "logout",
+      API_URL + "user/logout/",
       {},
       {
-        headers: { "Content-Type": "application/json" },
+        headers,
         withCredentials: true,
       }
     );
@@ -53,40 +61,50 @@ class AuthService {
     });
   }
 
-  addCompanyDept(data, token) {
+  addCompanyDept(data) {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${token}`,
+      Authorization: `Token ${this.token}`,
     };
     return axios.post(API_URL + "company/add-department/", data, {
       headers,
       withCredentials: true,
     });
   }
-  getCompanyDept(token) {
+  getCompanyDept() {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${token}`,
+      Authorization: `Token ${this.token}`,
     };
     return axios.get(API_URL + "company/get-department/", {
       headers,
       withCredentials: true,
     });
   }
-  getAllDept(token) {
+  getCompInterns() {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${token}`,
+      Authorization: `Token ${this.token}`,
+    };
+    return axios.get(API_URL + "company/department/interns/", {
+      headers,
+      withCredentials: true,
+    });
+  }
+  getAllDept() {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Token ${this.token}`,
     };
     return axios.get(API_URL + "company/get-all-departments/", {
       headers,
       withCredentials: true,
     });
   }
-  getAllInstitutes(token) {
+  getAllInstitutes() {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${token}`,
+      Authorization: `Token ${this.token}`,
     };
     return axios.get(API_URL + "student/get-institutions/", {
       headers,
@@ -94,52 +112,103 @@ class AuthService {
     });
   }
 
-  deleteCompanyDept(dept_id, token) {
+  deleteCompanyDept(dept_id) {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${token}`,
+      Authorization: `Token ${this.token}`,
     };
     return axios.delete(`${API_URL}company/delete-department/${dept_id}/`, {
       headers,
       withCredentials: true,
     });
   }
-  updateCompanyReq(data, token) {
+  getInternPotfolio(studentId) {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${token}`,
+      Authorization: `Token ${this.token}`,
+    };
+    return axios.get(`${API_URL}company/intern-potfolio/${studentId}/`, {
+      headers,
+      withCredentials: true,
+    });
+  }
+  updateCompanyReq(data) {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Token ${this.token}`,
     };
     return axios.post(`${API_URL}company/update-requirements/`, data, {
       headers,
       withCredentials: true,
     });
   }
-  deleteRequirement(req_id, token) {
+  deleteRequirement(req_id) {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${token}`,
+      Authorization: `Token ${this.token}`,
     };
     return axios.delete(`${API_URL}company/delete-requirement/${req_id}/`, {
       headers,
       withCredentials: true,
     });
   }
-  studentSettings(data, token) {
+  studentSettings(data) {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${token}`,
+      Authorization: `Token ${this.token}`,
     };
     return axios.post(`${API_URL}student/profile/settings/`, data, {
       headers,
       withCredentials: true,
     });
   }
-  getstudentSettings(token) {
+  getstudentSettings() {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${token}`,
+      Authorization: `Token ${this.token}`,
     };
     return axios.get(`${API_URL}student/profile/get-settings/`, {
+      headers,
+      withCredentials: true,
+    });
+  }
+  getstudentVideos() {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Token ${this.token}`,
+    };
+    return axios.get(`${API_URL}student/get-projects/`, {
+      headers,
+      withCredentials: true,
+    });
+  }
+  upLoadProject(data) {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Token ${this.token}`,
+    };
+    return axios.post(`${API_URL}student/upload-project/`, data, {
+      headers,
+      withCredentials: true,
+    });
+  }
+  getstudentComps() {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Token ${this.token}`,
+    };
+    return axios.get(`${API_URL}student/get-companies/`, {
+      headers,
+      withCredentials: true,
+    });
+  }
+  // Ai---------------
+  getstudentAiProjects() {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Token ${this.token}`,
+    };
+    return axios.get(`${API_URL}student/get-ai-projects/`, {
       headers,
       withCredentials: true,
     });

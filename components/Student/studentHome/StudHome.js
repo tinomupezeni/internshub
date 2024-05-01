@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import "./StudHome.css";
 import WelcomeAi from "../Ai/WelcomeAi";
+import { Link } from "react-router-dom";
+import AvailableProjs from "../Projects/AvailableProjs";
+import Button from "react-bootstrap/esm/Button";
 
 export default function StudHome() {
-  
+
   return (
     <>
       <div className="stud-welcome">
@@ -13,10 +16,11 @@ export default function StudHome() {
             Here, you can showcase your projects, achievements, and experiences.
             Upload your CV, share your work, and let your talent shine!
           </p>
-          
         </div>
-        <h2>guess what!!</h2>
-        <WelcomeAi />
+        <AvailableProjs />
+        <Link to="/student-profile/upload-project">
+          <Button className="upload-btn">upload</Button>
+        </Link>
       </div>
     </>
   );

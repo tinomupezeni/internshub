@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import Dropzone from "dropzone";
 import axios from "axios"; // For API requests
-import { useUser } from "../Hero/UserProvider";
 const API_URL = "http://localhost:8000/";
 
 const UploadPdf = () => {
+  const token = localStorage.getItem("token");
+  console.log(token);
   const uploadRef = useRef(null);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [uploadError, setUploadError] = useState(null);
   const [csrfToken, setCsrfToken] = useState(null);
-  const { loggedInData } = useUser();
   const uploadUrl = "student/upload-cv/";
 
   const onDrop = async (acceptedFiles) => {
@@ -21,7 +21,7 @@ const UploadPdf = () => {
         headers: {
           "Content-Type": "multipart/form-data",
           "X-CSRFToken": csrfToken,
-          Authorization: `Token ${loggedInData.token}`,
+          Authorization: `Token ${token}`,
         },
       });
 
@@ -36,7 +36,7 @@ const UploadPdf = () => {
     const myDropzone = new Dropzone(uploadRef.current, {
       headers: {
         "X-Requested-With": null,
-        Authorization: `Token ${loggedInData.token}`,
+        Authorization: `Token ${token}`,
       },
       url: API_URL + uploadUrl,
       acceptedFiles: ".pdf",
@@ -55,14 +55,8 @@ const UploadPdf = () => {
         this.on("drop", onDrop);
       },
     });
-    // Apply Bootstrap classes
-    myDropzone.element.classList.add(
-      "dropzone",
-      "border",
-      "border-primary",
-      "rounded"
-    );
-    console.log("token", loggedInData.token);
+    
+    console.log("token", token);
     getCsrfToken();
     return () => {
       myDropzone.destroy();

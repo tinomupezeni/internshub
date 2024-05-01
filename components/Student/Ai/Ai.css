@@ -31,19 +31,25 @@
 
 .projects-ai {
   background: none;
+  width: 100%;
 }
 
-.projects-ai {
+.projects-ai ul {
   padding: 10px;
-  margin: 10px auto;
-  background-image: url("https://images.unsplash.com/photo-1471116260918-e7a900488f12?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGZ1biUyMGZhY3R8ZW58MHx8MHx8fDA%3D");
-  background-position: center;
-  background-repeat: no-repeat;
-  object-fit: cover;
-  width: 70%;
+  margin: 0 auto;
+  padding: 10px;
   border-radius: 4px;
-  display: flex;
-  align-items: center;
+  width: 40%;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.555);
+}
+
+.projects-ai ul li {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #b4b4b4;
+  border-radius: 4px;
+  margin: 4px 0;
+  color: #000000;
 }
 
 .projects-ai div {
@@ -54,8 +60,35 @@
   padding: 10px;
 }
 
+/* UploadPdf.css */
+
+/* Customize the dropzone container */
+.dropzone-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Style the dropzone area */
+.dropzone {
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.dropzone:hover {
+  border-color: #007bff; /* Change to your desired hover color */
+}
+
 @media screen and (max-width: 850px) {
   .projects-ai {
     width: 100%;
+  }
+  .projects-ai ul {
+    width: 95%;
+    margin: 0 auto;
   }
 }

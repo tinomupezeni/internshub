@@ -1,32 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, forwardRef } from "react";
 import Logo from "../../assets/Logo Files/For Web/png/Color logo - no background.png";
 import "./LoginNavbar.css";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
-  faSignOut,
-  faBuildingColumns,
-  faUserGraduate,
   faClose,
   faComments,
   faUserCircle,
-  faUser,
   faGears,
+  faBook,
+  faHome,
+  faUpload,
+  faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 import Ai from "../Student/Ai/Ai";
-import InternsSideBar from "./InternsSideBar";
 import { useNavigate } from "react-router-dom";
+import secureLocalStorage from "react-secure-storage";
+import Server from "../Hero/Server";
 
 export default function StudentCvNav() {
   const [aiChat, setAiChat] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const userProfileRef = useRef(null);
+  const navLinksRef = useRef(null);
 
-  const [toggleIcon, setToggleIcon] = useState(false);
-
-  const handleIcon = () => {
-    setToggleIcon(true);
-  };
+  const studentProfileData = secureLocalStorage.getItem("studentProfileData");
+  const loggedInData = secureLocalStorage.getItem("loggedInData");
+  let navigate = useNavigate();
 
   const handleAi = () => {
     setAiChat(true);
@@ -35,9 +35,10 @@ export default function StudentCvNav() {
   const closeAi = () => {
     setAiChat(false);
   };
+  const [sideBar, setSideBar] = useState(false);
 
-  const closeSideBar = () => {
-    setToggleIcon(false);
+  const openSideBar = () => {
+    setSideBar(!sideBar);
   };
 
   const [settings, setSettings] = useState(false);
@@ -46,16 +47,49 @@ export default function StudentCvNav() {
     setSettings(!settings);
   };
 
+  const logoutBtn = () => {
+    Server.logout().then(
+      () => {
+        navigate("/log-in");
+        secureLocalStorage.clear();
+      },
+      (error) => {
+        navigate("/log-in");
+        secureLocalStorage.clear();
+      }
+    );
+  };
+
   useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
+    if (!loggedInData || !studentProfileData) {
+      navigate("/log-in");
+    }
+  }, []);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        settings &&
+        userProfileRef.current &&
+        !userProfileRef.current.contains(event.target)
+      ) {
+        setSettings(false);
+      }
+
+      if (
+        sideBar &&
+        navLinksRef.current &&
+        !navLinksRef.current.contains(event.target)
+      ) {
+        setSideBar(false);
+      }
     };
 
-    window.addEventListener("resize", handleResize);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      window.removeEventListener("resize", handleResize);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [settings, sideBar]);
+
   return (
     <>
       <div className="login-navbar">
@@ -66,33 +100,33 @@ export default function StudentCvNav() {
           <button onClick={handleAi} className="ai-btn">
             <FontAwesomeIcon icon={faComments} /> ai chat
           </button>
-          <div className="icon" onClick={handleIcon}>
+          <div className="icon" onClick={openSideBar}>
             <i>
               <FontAwesomeIcon icon={faBars} />
             </i>
           </div>
           <div className="profile-error">
             <div className="profile" onClick={openSettings}>
-              <span>t</span>
+              <span>{loggedInData.name && loggedInData.name[0]}</span>
             </div>
-            <div className="red-dot"></div>
+            {(!studentProfileData.student_profile.program ||
+              !studentProfileData.student_profile.introduction ||
+              !studentProfileData.student_profile.department ||
+              !studentProfileData.student_profile.institution) && (
+              <div className="red-dot"></div>
+            )}
           </div>
         </div>
       </div>
-      {settings && <UserProfile />}
-      {toggleIcon && windowWidth < 850 && (
-        <>
-          <div className="side-bar">
-            <div className="side-bar-heading">
-              <h4>explore</h4>
-              <i onClick={closeSideBar}>
-                <FontAwesomeIcon icon={faClose} />
-              </i>
-            </div>
-            <InternsSideBar />
-          </div>
-        </>
+      {settings && (
+        <UserProfile
+          studentProfileData={studentProfileData}
+          loggedInData={loggedInData}
+          ref={userProfileRef}
+          logoutBtn={logoutBtn}
+        />
       )}
+      {sideBar && <NavLinks ref={navLinksRef} />}
       {aiChat && (
         <div className="ai-cont">
           <div className="ai-heading">
@@ -108,35 +142,81 @@ export default function StudentCvNav() {
   );
 }
 
-const UserProfile = () => {
-  return (
-    <>
-      <div className="userprofile">
-        <div className="top">
-          <img src={Logo} />
-          <button>sign out</button>
-        </div>
-        <div className="middle">
-          <i>
-            <FontAwesomeIcon icon={faUserCircle} />
-          </i>
-          <div>
-            <h3>Tinotenda</h3>
-            <p>emailsnsjsjnjwnjs@mdk.com</p>
-            <p>software engineer</p>
+const UserProfile = forwardRef(
+  ({ studentProfileData, loggedInData, logoutBtn }, ref) => {
+    return (
+      <>
+        <div ref={ref} className="userprofile">
+          <div className="top">
+            <img src={Logo} />
+            <button onClick={logoutBtn}>sign out</button>
+          </div>
+          <div className="middle">
+            <i>
+              <FontAwesomeIcon icon={faUserCircle} />
+            </i>
+            <div>
+              <h3>{loggedInData.name}</h3>
+              <p>{loggedInData.email}</p>
+              <p>{studentProfileData.student_profile.program}</p>
+            </div>
+          </div>
+          <div className="bottom">
+            <Link to="/student-profile/profile-settings">
+              <button>
+                <div className="profile-error">
+                  <FontAwesomeIcon icon={faGears} /> manage account
+                  {(!studentProfileData.student_profile.program ||
+                    !studentProfileData.student_profile.introduction ||
+                    !studentProfileData.student_profile.department ||
+                    !studentProfileData.student_profile.institution) && (
+                    <div className="red-dot"></div>
+                  )}
+                </div>
+              </button>
+            </Link>
           </div>
         </div>
-        <div className="bottom">
-          <Link to="/student-profile/profile-settings">
-            <button>
-              <div className="profile-error">
-                <FontAwesomeIcon icon={faGears} /> manage account
-                <div className="red-dot"></div>
-              </div>
-            </button>
-          </Link>
-        </div>
+      </>
+    );
+  }
+);
+
+const NavLinks = forwardRef((props, ref) => {
+  return (
+    <>
+      <div ref={ref} className="nav-links">
+        <h4>explore</h4>
+        <Link to="/student-home" style={{ textDecoration: "none" }}>
+          <button>
+            <FontAwesomeIcon icon={faHome} /> home
+          </button>
+        </Link>
+        <Link
+          to="/student-profile/cv-builder"
+          style={{ textDecoration: "none" }}
+        >
+          <button>
+            <FontAwesomeIcon icon={faBook} /> resume
+          </button>
+        </Link>
+        <Link
+          to="/student-profile/upload-project"
+          style={{ textDecoration: "none" }}
+        >
+          <button>
+            <FontAwesomeIcon icon={faUpload} /> upload project
+          </button>
+        </Link>
+        <Link
+          to="/student-profile/recruiting-companies"
+          style={{ textDecoration: "none" }}
+        >
+          <button>
+            <FontAwesomeIcon icon={faMagnifyingGlass} /> recruiting companies
+          </button>
+        </Link>
       </div>
     </>
   );
-};
+});

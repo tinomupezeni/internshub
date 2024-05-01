@@ -56,9 +56,9 @@
   text-transform: lowercase;
 }
 
-.userprofile .bottom{
-   padding: 10px 0;
-   text-align: center;
+.userprofile .bottom {
+  padding: 10px 0;
+  text-align: center;
 }
 
 .userprofile .bottom button {
@@ -68,10 +68,9 @@
   background-color: transparent;
   color: rgb(33, 33, 109);
   border-bottom: 1px solid;
-
 }
 
-.settings .row button{
+.settings .row button {
   width: 60%;
   /* background-color: #0059ff; */
   padding: 10px;
@@ -80,4 +79,28 @@
   color: #fff;
   border-radius: 4px;
 }
+.settings-input .profile-error {
+  position: relative;
+}
 
+.settings-input .red-dot {
+  position: absolute;
+  z-index: 9999999;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  box-shadow: 0 0 20px red;
+  animation: blink 0.5s infinite alternate;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 2;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}

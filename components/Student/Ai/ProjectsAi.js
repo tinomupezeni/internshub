@@ -1,66 +1,91 @@
 import React, { useEffect, useState } from "react";
 import "./Ai.css";
-import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
-const API = "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";
+import Server from "../../Hero/Server";
+import secureLocalStorage from "react-secure-storage";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCircleArrowRight,
+  faCircleRight,
+  faSync,
+} from "@fortawesome/free-solid-svg-icons";
+import Button from "react-bootstrap/esm/Button";
 
 const ProjectsAi = () => {
-  const dept = "software engineering";
-  const [messages, setMessages] = useState("");
+  const [proj, setProjects] = useState([]);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const processMessageToChatGPT = async () => {
-    const systemMessage = {
-      role: "system",
-      content: `Suggest 5 ${dept} projects for Zimbabwe interns, listing only the project name and skills gained.`,
-    };
-
-    const apiRequestBody = {
-      model: "gpt-3.5-turbo",
-      messages: [systemMessage],
-    };
-
-    try {
-      const response = await fetch(
-        "https://api.openai.com/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${API}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(apiRequestBody),
-        }
-      );
-
-      const data = await response.json();
-      const formatAsList = (data) => {
-        const projects = data.choices[0].message.content.split(/(?=\d\.)/);
-
-        const listItems = projects
-          .map((project) => `<li style="padding: 10px 0;">${project}</li>`)
-          .join("");
-
-        return `<ul>${listItems}</ul>`;
-      };
-
-      // ...
-
-      setMessages(formatAsList(data));
-
-      setMessages(formatAsList(data));
-    } catch (error) {
-      console.error("Error:", error);
-    }
+  const fetchData = () => {
+    setIsLoading(true);
+    setErrorMsg(null);
+    setProjects([]);
+    Server.getstudentAiProjects().then(
+      (response) => {
+        setProjects(response.data);
+        setIsLoading(false);
+        setErrorMsg(null);
+      },
+      (error) => {
+        setErrorMsg("something went wrong, retrying...");
+        setIsLoading(false);
+        fetchData();
+      }
+    );
   };
 
-  useEffect(() => {
-    processMessageToChatGPT();
-  }, []);
+  // const proj = secureLocalStorage.getItem("projects");
+
+
+  useEffect(fetchData, []);
 
   return (
     <div className="projects-ai">
       <div>
-        <h3>select a project you want to work on</h3>
-        <p dangerouslySetInnerHTML={{ __html: messages }} />
+        {errorMsg && (
+          <p className="alert alert-danger" role="alert">
+            {errorMsg}
+          </p>
+        )}
+        {isLoading && (
+          <div
+            style={{
+              alignItems: "center",
+              textAlign: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div
+              class="d-flex justify-content-center align-items-center"
+              style={{
+                height: "50px",
+              }}
+            >
+              <div
+                className="spinner-border text-primary"
+                role="status"
+                style={{ width: "2rem", height: "2rem" }}
+              >
+                <span class="visually-hidden"></span>
+              </div>
+            </div>
+            <p>
+              <b>fetching projects...</b>
+            </p>
+          </div>
+        )}
+        {proj && (
+          <ul>
+            <p className="alert alert-info text-center" role="alert">
+              projects that can make you shine
+            </p>
+            {proj.map((project) => {
+              return <li>{project.project}</li>;
+            })}
+            <Button style={{ margin: "0 auto", width: "100%" }} onClick={fetchData}>
+              refresh <FontAwesomeIcon icon={faSync} />
+            </Button>
+          </ul>
+        )}
       </div>
     </div>
   );

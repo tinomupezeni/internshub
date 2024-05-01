@@ -47,6 +47,8 @@
 
 .comp-signup {
   padding: 1rem;
+  width: 40%;
+  margin: 0 auto;
 }
 .comp-signup div {
   display: flex;
@@ -89,6 +91,11 @@
   .sign-up {
     padding: 100px 0;
     color: #383838;
+    width: 100%;
+    margin: 0 auto;
+  }
+  .comp-signup {
+    padding: 1rem;
     width: 100%;
     margin: 0 auto;
   }

@@ -70,6 +70,17 @@
   animation: blink 0.5s infinite alternate; 
 }
 
+.red-dot-input {
+  z-index: 9999999;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  box-shadow: 0 0 20px red; 
+  animation: blink 0.5s infinite alternate; 
+}
+
 @keyframes blink {
   0% {
     opacity: 2;

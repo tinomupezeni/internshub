@@ -16,7 +16,6 @@ export default function SideBar({ signUp, companyAccount }) {
     companyAccountBool: companyAccount,
   });
   const closeSideBar = () => {
-    console.log('ffff');
     setState((prevState) => {
       return { ...prevState, signUpBool: false, companyAccountBool: false };
     });
