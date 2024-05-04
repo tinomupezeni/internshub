@@ -51,9 +51,7 @@ const MyProjects = ({ projects }) => {
               </ul>
             ))
           ) : (
-            <div className="intern">
-              <p>No projects found</p>
-            </div>
+            <p className="alert alert-warning">No projects found</p>
           )}
         </div>
       </div>

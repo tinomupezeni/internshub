@@ -35,7 +35,6 @@ const ProjectsAi = () => {
 
   // const proj = secureLocalStorage.getItem("projects");
 
-
   useEffect(fetchData, []);
 
   return (
@@ -46,42 +45,43 @@ const ProjectsAi = () => {
             {errorMsg}
           </p>
         )}
-        {isLoading && (
-          <div
-            style={{
-              alignItems: "center",
-              textAlign: "center",
-              justifyContent: "center",
-            }}
-          >
-            <div
-              class="d-flex justify-content-center align-items-center"
-              style={{
-                height: "50px",
-              }}
-            >
-              <div
-                className="spinner-border text-primary"
-                role="status"
-                style={{ width: "2rem", height: "2rem" }}
-              >
-                <span class="visually-hidden"></span>
-              </div>
-            </div>
-            <p>
-              <b>fetching projects...</b>
-            </p>
-          </div>
-        )}
+
         {proj && (
           <ul>
             <p className="alert alert-info text-center" role="alert">
               projects that can make you shine
             </p>
+            {isLoading && (
+              <div
+                style={{
+                  alignItems: "center",
+                  textAlign: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <div
+                  class="d-flex justify-content-center align-items-center"
+                >
+                  <div
+                    className="spinner-border text-primary"
+                    role="status"
+                    style={{ width: "2rem", height: "2rem" }}
+                  >
+                    <span class="visually-hidden"></span>
+                  </div>
+                </div>
+                <p>
+                  <b>generating projects...</b>
+                </p>
+              </div>
+            )}
             {proj.map((project) => {
               return <li>{project.project}</li>;
             })}
-            <Button style={{ margin: "0 auto", width: "100%" }} onClick={fetchData}>
+            <Button
+              style={{ margin: "0 auto", width: "100%" }}
+              onClick={fetchData}
+            >
               refresh <FontAwesomeIcon icon={faSync} />
             </Button>
           </ul>

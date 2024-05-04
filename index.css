@@ -27,7 +27,11 @@ body {
   padding: 0;
   margin: 0;
 }
-h1, h2, h3, h4, h5{
+h1,
+h2,
+h3,
+h4,
+h5 {
   overflow-y: hidden;
 }
 li {
@@ -38,7 +42,23 @@ Link {
 }
 button {
   cursor: pointer;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  text-transform: capitalize;
 }
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+label {
+  width: auto;
+  /* position: absolute; */
+  display: inline;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;

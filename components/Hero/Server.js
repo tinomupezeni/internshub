@@ -7,6 +7,71 @@ class AuthService {
   get token() {
     return secureLocalStorage.getItem("loggedInData")?.token;
   }
+  // verify code
+  sendEmail(phoneNumber) {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    return axios.post(
+      API_URL + "user/send-verification-code/",
+      JSON.stringify({ phoneNumber: phoneNumber }),
+      { headers, withCredentials: true }
+    );
+  }
+
+  sendReceivedEmailCode(phoneNumber, code) {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    return axios.post(
+      API_URL + "user/verify-email-code/",
+
+      JSON.stringify({ phoneNumber: phoneNumber, code: code }),
+      { headers, withCredentials: true }
+    );
+  }
+
+  getCompVerifCode() {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${this.token}`,
+    };
+    return axios.get(API_URL + "company/send-login-code/", {
+      headers,
+      withCredentials: true,
+    });
+  }
+  sendCompLoginVerifCode(data) {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${this.token}`,
+    };
+    return axios.post(API_URL + "company/verify-login-code/", data, {
+      headers,
+      withCredentials: true,
+    });
+  }
+  getStudentVerifCode() {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${this.token}`,
+    };
+    return axios.get(API_URL + "student/send-login-code/", {
+      headers,
+      withCredentials: true,
+    });
+  }
+  sendStudentLoginVerifCode(data) {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${this.token}`,
+    };
+    return axios.post(API_URL + "student/verify-login-code/", data, {
+      headers,
+      withCredentials: true,
+    });
+  }
+
   loginstudent(data) {
     const headers = {
       "Content-Type": "application/json",
@@ -30,7 +95,7 @@ class AuthService {
   logout() {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${this.token}`,
+      Authorization: `Bearer ${this.token}`,
     };
     return axios.post(
       API_URL + "user/logout/",
@@ -64,7 +129,7 @@ class AuthService {
   addCompanyDept(data) {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${this.token}`,
+      Authorization: `Bearer ${this.token}`,
     };
     return axios.post(API_URL + "company/add-department/", data, {
       headers,
@@ -74,7 +139,7 @@ class AuthService {
   getCompanyDept() {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${this.token}`,
+      Authorization: `Bearer ${this.token}`,
     };
     return axios.get(API_URL + "company/get-department/", {
       headers,
@@ -84,7 +149,7 @@ class AuthService {
   getCompInterns() {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${this.token}`,
+      Authorization: `Bearer ${this.token}`,
     };
     return axios.get(API_URL + "company/department/interns/", {
       headers,
@@ -94,7 +159,7 @@ class AuthService {
   getAllDept() {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${this.token}`,
+      Authorization: `Bearer ${this.token}`,
     };
     return axios.get(API_URL + "company/get-all-departments/", {
       headers,
@@ -104,7 +169,7 @@ class AuthService {
   getAllInstitutes() {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${this.token}`,
+      Authorization: `Bearer ${this.token}`,
     };
     return axios.get(API_URL + "student/get-institutions/", {
       headers,
@@ -115,7 +180,7 @@ class AuthService {
   deleteCompanyDept(dept_id) {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${this.token}`,
+      Authorization: `Bearer ${this.token}`,
     };
     return axios.delete(`${API_URL}company/delete-department/${dept_id}/`, {
       headers,
@@ -125,7 +190,7 @@ class AuthService {
   getInternPotfolio(studentId) {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${this.token}`,
+      Authorization: `Bearer ${this.token}`,
     };
     return axios.get(`${API_URL}company/intern-potfolio/${studentId}/`, {
       headers,
@@ -135,7 +200,7 @@ class AuthService {
   updateCompanyReq(data) {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${this.token}`,
+      Authorization: `Bearer ${this.token}`,
     };
     return axios.post(`${API_URL}company/update-requirements/`, data, {
       headers,
@@ -145,7 +210,7 @@ class AuthService {
   deleteRequirement(req_id) {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${this.token}`,
+      Authorization: `Bearer ${this.token}`,
     };
     return axios.delete(`${API_URL}company/delete-requirement/${req_id}/`, {
       headers,
@@ -155,7 +220,7 @@ class AuthService {
   studentSettings(data) {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${this.token}`,
+      Authorization: `Bearer ${this.token}`,
     };
     return axios.post(`${API_URL}student/profile/settings/`, data, {
       headers,
@@ -165,7 +230,7 @@ class AuthService {
   getstudentSettings() {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${this.token}`,
+      Authorization: `Bearer ${this.token}`,
     };
     return axios.get(`${API_URL}student/profile/get-settings/`, {
       headers,
@@ -175,7 +240,7 @@ class AuthService {
   getstudentVideos() {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${this.token}`,
+      Authorization: `Bearer ${this.token}`,
     };
     return axios.get(`${API_URL}student/get-projects/`, {
       headers,
@@ -185,7 +250,7 @@ class AuthService {
   upLoadProject(data) {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${this.token}`,
+      Authorization: `Bearer ${this.token}`,
     };
     return axios.post(`${API_URL}student/upload-project/`, data, {
       headers,
@@ -195,7 +260,7 @@ class AuthService {
   getstudentComps() {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${this.token}`,
+      Authorization: `Bearer ${this.token}`,
     };
     return axios.get(`${API_URL}student/get-companies/`, {
       headers,
@@ -206,7 +271,7 @@ class AuthService {
   getstudentAiProjects() {
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Token ${this.token}`,
+      Authorization: `Bearer ${this.token}`,
     };
     return axios.get(`${API_URL}student/get-ai-projects/`, {
       headers,

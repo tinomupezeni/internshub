@@ -17,7 +17,7 @@ const CompanySignUp = ({ formik }) => {
             placeholder="Nash Paints"
           />
           {formik.errors.compName ? (
-            <div className="text-danger">{formik.errors.email}</div>
+            <div className="text-danger">{formik.errors.compName}</div>
           ) : null}
         </div>
         <div>

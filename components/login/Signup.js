@@ -9,6 +9,7 @@ import CompanySignUp from "./signup-components/CompanySignUp";
 import StudentSignUp from "./signup-components/StudentSignUp";
 import Button from "react-bootstrap/Button";
 import Server from "../Hero/Server";
+import VerifyEmail from "./signup-components/VerifyEmail";
 
 export default function Signup() {
   const [state, setState] = useState({
@@ -16,6 +17,8 @@ export default function Signup() {
     company: false,
     isLoading: false,
     errorMsg: "",
+    verifyPhone: false,
+    data: null,
   });
   let navigate = useNavigate();
   // change
@@ -24,7 +27,6 @@ export default function Signup() {
 
   const statusSelect = (e) => {
     const value = e.currentTarget.getAttribute("data-value");
-    console.log(value);
     setStatus(value);
     if (value === "company") {
       setState((prevState) => {
@@ -94,24 +96,16 @@ export default function Signup() {
     },
     validationSchema: validationSchemaComp,
     onSubmit: (values) => {
+      console.log(values);
       setIsLoading();
-      Server.signupCompany(values).then(
-        () => {
-          resetIsLoading();
-          navigate("/log-in");
-        },
-        (error) => {
-          resetIsLoading();
-          console.log(error);
-          setState((prevState) => {
-            return {
-              ...prevState,
-              errorMsg: error.response.data.error,
-            };
-          });
-        }
-      );
-      // Perform signup logic here
+      setState((prevState) => {
+        return {
+          ...prevState,
+          data: values,
+          verifyPhone: true,
+          status: values.status,
+        };
+      });
     },
   });
   const InternFormik = useFormik({
@@ -126,24 +120,38 @@ export default function Signup() {
     validationSchema: validationSchemaIntern,
     onSubmit: (values) => {
       setIsLoading();
-      Server.signupStudent(values).then(
-        () => {
-          resetIsLoading();
-          navigate("/log-in");
-        },
-        (error) => {
-          resetIsLoading();
-          console.log(error);
-          setState((prevState) => {
-            return {
-              ...prevState,
-              errorMsg: error.response.data.error,
-            };
-          });
-        }
-      );
+      console.log(values);
+      setState((prevState) => {
+        return {
+          ...prevState,
+          data: values,
+          status: values.status,
+          verifyPhone: true,
+        };
+      });
     },
   });
+
+  const emailVerified = () => {
+    setState((prevState) => {
+      return {
+        ...prevState,
+        verifyEmail: true,
+      };
+    });
+  };
+
+  const handleVerifyPhoneCallback = () => {
+    resetIsLoading()
+    compFormik.resetForm();
+    InternFormik.resetForm();
+    setState((prevState) => {
+      return {
+        ...prevState,
+        verifyPhone: false,
+      };
+    });
+  };
 
   useEffect(() => {
     const handleDismissError = (event) => {
@@ -162,7 +170,7 @@ export default function Signup() {
     return () => {
       window.removeEventListener("click", handleDismissError); // Cleanup on unmount
     };
-  }, [state.errorMsg]); // Run effect only when errorMsg changes
+  }, [state.errorMsg]);
 
   return (
     <>
@@ -181,34 +189,40 @@ export default function Signup() {
               <h2 style={{ padding: 10 + "px" }}>
                 create a new company account
               </h2>
-              <p>Post job requirements and find matching students.</p>
+              <p>Post internship requirements and find matching students.</p>
             </div>
             <CategoryInto
               status={status}
               statusSelect={statusSelect}
               company={state.company}
               student={state.student}
+              handleVerifyPhone={handleVerifyPhoneCallback}
             />
-            <form onSubmit={compFormik.handleSubmit}>
-              <CompanySignUp formik={compFormik} />
-              {state.errorMsg && (
-                <p className="alert alert-danger" role="alert">
-                  {state.errorMsg}
-                </p>
-              )}
-              <div className="signup-btn">
-                <Button type="submit" disabled={state.isLoading}>
-                  create an account{" "}
-                  <span
-                    className={`spinner-border spinner-border-sm ${
-                      state.isLoading ? "" : "d-none"
-                    }`}
-                    role="status"
-                    aria-hidden="true"
-                  ></span>
-                </Button>
-              </div>
-            </form>
+            {!state.verifyPhone ? (
+              <form onSubmit={compFormik.handleSubmit}>
+                <CompanySignUp formik={compFormik} />
+                {state.errorMsg && (
+                  <p className="alert alert-danger" role="alert">
+                    {state.errorMsg}
+                  </p>
+                )}
+
+                <div className="signup-btn">
+                  <Button type="submit" disabled={state.isLoading}>
+                    create an account{" "}
+                    <span
+                      className={`spinner-border spinner-border-sm ${
+                        state.isLoading ? "" : "d-none"
+                      }`}
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                  </Button>
+                </div>
+              </form>
+            ) : (
+              <VerifyEmail signupdata={state.data} />
+            )}
           </>
         ) : (
           <>
@@ -225,27 +239,35 @@ export default function Signup() {
               statusSelect={statusSelect}
               company={state.company}
               student={state.student}
+              handleVerifyPhone={handleVerifyPhoneCallback}
             />
-            <form onSubmit={InternFormik.handleSubmit}>
-              <StudentSignUp formik={InternFormik} />
-              {state.errorMsg && (
-                <p className="alert alert-danger" role="alert">
-                  {state.errorMsg}
-                </p>
-              )}
-              <div className="signup-btn">
-                <Button type="submit" disabled={state.isLoading}>
-                  create an account{" "}
-                  <span
-                    className={`spinner-border spinner-border-sm ${
-                      state.isLoading ? "" : "d-none"
-                    }`}
-                    role="status"
-                    aria-hidden="true"
-                  ></span>
-                </Button>
-              </div>
-            </form>
+            {!state.verifyPhone ? (
+              <form onSubmit={InternFormik.handleSubmit}>
+                <StudentSignUp
+                  formik={InternFormik}
+                  emailVerified={emailVerified}
+                />
+                {state.errorMsg && (
+                  <p className="alert alert-danger" role="alert">
+                    {state.errorMsg}
+                  </p>
+                )}
+                <div className="signup-btn">
+                  <Button type="submit" disabled={state.isLoading}>
+                    create an account{" "}
+                    <span
+                      className={`spinner-border spinner-border-sm ${
+                        state.isLoading ? "" : "d-none"
+                      }`}
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                  </Button>
+                </div>
+              </form>
+            ) : (
+              <VerifyEmail signupdata={state.data} />
+            )}
           </>
         )}
       </div>

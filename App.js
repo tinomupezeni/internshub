@@ -7,9 +7,11 @@ import CompDept from "./routes/CompDept";
 import CompInterns from "./routes/CompInterns";
 import StudentCvPage from "./routes/StudentCvPage";
 import StudentWelcome from "./routes/StudentWelcome";
-import StudentProject from "./routes/StudentProject";
 import StudUploadProj from "./routes/StudUploadProj";
+import StudentSettings from "./routes/StudentSettings";
 import { UserProvider } from "./components/Hero/UserProvider";
+import RecruitComp from "./routes/RecruitComp";
+import CompViewInternPotf from "./routes/CompViewInternPotf";
 
 function App() {
   return (
@@ -20,14 +22,19 @@ function App() {
         <Route path="/log-in" element={<JustLogin />} />
         <Route path="/student-home" element={<StudentWelcome />} />
         <Route path="/student-profile" element={<StudentView />} />
-        <Route path="/student-profile/projects" element={<StudentProject />} />
+        <Route path="/student-profile/recruiting-companies" element={<RecruitComp />} />
         <Route path="/student-profile/cv-builder" element={<StudentCvPage />} />
         <Route
           path="/student-profile/upload-project"
           element={<StudUploadProj />}
         />
+        <Route
+          path="/student-profile/profile-settings"
+          element={<StudentSettings />}
+        />
         <Route path="/company-departments" element={<CompDept />} />
         <Route path="/company-potential-interns" element={<CompInterns />} />
+        <Route path="/company/intern/potfolio" element={<CompViewInternPotf />} />
       </Routes>
     </UserProvider>
   );

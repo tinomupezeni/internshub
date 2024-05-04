@@ -47,7 +47,7 @@
 
 .comp-signup {
   padding: 1rem;
-  width: 40%;
+  width: 100%;
   margin: 0 auto;
 }
 .comp-signup div {
@@ -87,11 +87,38 @@
   border-bottom: 2px solid #0059ff;
   transition: .3s ease-in-out;
 }
+.send-phonenumber {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  width: 100%;
+  margin: 0 auto;
+}
+.send-label{
+  font: 1rem;
+  padding: 5px;
+  text-align: center;
+  width: 100%;
+}
+.send-phonenumber input{
+  border: 1px solid #383838;
+  font-size: 1rem;
+  padding: 10px;
+  border-radius: 4px;
+  text-transform: none;
+  letter-spacing: 0.2rem;
+  text-align: center;
+}
 @media screen and (max-width: 850px) {
   .sign-up {
     padding: 100px 0;
     color: #383838;
     width: 100%;
+    margin: 0 auto;
+  }
+  .send-phonenumber {
     margin: 0 auto;
   }
   .comp-signup {
