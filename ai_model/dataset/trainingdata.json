@@ -1,0 +1,54 @@
+{
+  "students": [
+    {
+      "id": 1,
+      "study_program": {
+        "field": "Computer Science",
+        "courses": ["Algorithms", "Data Structures", "Machine Learning"],
+        "skills": ["Python", "Java", "Data Analysis"]
+      }
+    },
+    {
+      "id": 2,
+      "study_program": {
+        "field": "Business Administration",
+        "courses": ["Marketing", "Finance", "Management"],
+        "skills": ["Communication", "Leadership", "Business Planning"]
+      }
+    }
+  ],
+  "companies": [
+    {
+      "id": 1,
+      "company": "TechCorp",
+      "requirements": {
+        "skills": ["Python", "Cloud Computing", "Data Analysis"],
+        "experience": "2+ years"
+      }
+    },
+    {
+      "id": 2,
+      "company": "FinServe",
+      "requirements": {
+        "skills": ["Java", "Financial Modeling", "Risk Analysis"],
+        "experience": "3+ years"
+      }
+    }
+  ],
+  "projects": [
+    {
+      "id": 1,
+      "title": "Chatbot Development",
+      "description": "Build a conversational AI chatbot using Python and machine learning",
+      "required_skills": ["Python", "Machine Learning", "NLP"],
+      "duration": "8 weeks"
+    },
+    {
+      "id": 2,
+      "title": "Market Research Report",
+      "description": "Conduct market research and create a comprehensive report on industry trends",
+      "required_skills": ["Research", "Data Analysis", "Communication"],
+      "duration": "6 weeks"
+    }
+  ]
+}
